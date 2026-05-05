@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#e07a3c">
+<title>管理面板 — 李柯的公益记录</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/admin.css">
+<link rel="icon" type="image/jpeg" href="assets/avatar.jpeg">
+</head>
+<body class="admin-body">
+
+<div id="login-view" class="auth-view" hidden>
+  <div class="auth-card">
+    <h1>管理面板</h1>
+    <p class="muted">请输入管理员密码以继续</p>
+    <form id="login-form">
+      <input type="password" id="login-pw" placeholder="管理员密码" autocomplete="current-password" required>
+      <button type="submit" class="btn">登录</button>
+      <p class="error" id="login-error" hidden></p>
+    </form>
+    <p class="muted small"><a href="index.html">← 返回展示页</a></p>
+  </div>
+</div>
+
+<div id="app-view" hidden>
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <h1>管理面板</h1>
+      <div class="admin-actions">
+        <a href="index.html" class="btn btn-secondary" target="_blank" rel="noopener">查看公开页</a>
+        <button id="btn-logout" class="btn btn-secondary">退出</button>
+      </div>
+    </div>
+    <nav class="admin-tabs" role="tablist">
+      <button type="button" class="admin-tab is-active" data-tab="donations" role="tab">公益记录</button>
+      <button type="button" class="admin-tab" data-tab="sponsors" role="tab">赞赏名单</button>
+    </nav>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ===== Donations panel ===== -->
+    <section class="admin-panel" data-panel="donations">
+      <section class="admin-stats">
+        <div class="stat"><div class="stat-value" id="adm-count">—</div><div class="stat-label">证书数</div></div>
+        <div class="stat"><div class="stat-value" id="adm-amount">—</div><div class="stat-label">累计捐赠</div></div>
+        <div class="stat"><div class="stat-value" id="adm-updated">—</div><div class="stat-label">最后更新</div></div>
+      </section>
+
+      <div class="admin-toolbar">
+        <input type="search" id="adm-q" placeholder="搜索项目、基金会、证书编号…">
+        <button id="btn-new" class="btn">+ 新增记录</button>
+      </div>
+      <p class="muted small" id="adm-status"></p>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>项目</th>
+              <th>基金会</th>
+              <th>渠道</th>
+              <th>金额</th>
+              <th>证书号</th>
+              <th>图片</th>
+              <th class="col-action">操作</th>
+            </tr>
+          </thead>
+          <tbody id="adm-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Sponsors panel ===== -->
+    <section class="admin-panel" data-panel="sponsors" hidden>
+      <section class="admin-stats">
+        <div class="stat"><div class="stat-value" id="sp-adm-count">—</div><div class="stat-label">赞赏人次</div></div>
+        <div class="stat"><div class="stat-value" id="sp-adm-amount">—</div><div class="stat-label">累计金额</div></div>
+        <div class="stat"><div class="stat-value" id="sp-adm-updated">—</div><div class="stat-label">最后更新</div></div>
+      </section>
+
+      <div class="admin-toolbar">
+        <input type="search" id="sp-adm-q" placeholder="搜索姓名或留言…">
+        <button id="btn-sp-new" class="btn">+ 新增赞赏</button>
+      </div>
+      <p class="muted small" id="sp-adm-status"></p>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>姓名</th>
+              <th>金额</th>
+              <th>留言</th>
+              <th class="col-action">操作</th>
+            </tr>
+          </thead>
+          <tbody id="sp-adm-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== Donation record dialog ===== -->
+<dialog id="record-dialog" class="record-dialog">
+  <form id="record-form" method="dialog">
+    <h2 id="record-dialog-title">新增记录</h2>
+
+    <label>
+      <span>捐赠人</span>
+      <input type="text" name="name" required>
+    </label>
+
+    <label>
+      <span>项目名称</span>
+      <input type="text" name="project" required>
+    </label>
+
+    <label>
+      <span>捐赠渠道</span>
+      <select name="channel" required>
+        <option value="txgy">腾讯公益</option>
+        <option value="xwgc">希望工程</option>
+        <option value="other">其他</option>
+      </select>
+    </label>
+
+    <label>
+      <span>基金会 / 公益机构</span>
+      <input type="text" name="foundation" list="foundation-list" required>
+      <datalist id="foundation-list"></datalist>
+    </label>
+
+    <div class="row-2">
+      <label>
+        <span>金额（元）</span>
+        <input type="number" name="amount" step="0.01" min="0" placeholder="留空=实物/物资">
+      </label>
+      <label>
+        <span>捐赠日期</span>
+        <input type="date" name="date" required>
+      </label>
+    </div>
+
+    <label>
+      <span>助力效应（可选）</span>
+      <input type="text" name="effect" placeholder="例：33周免费午餐">
+    </label>
+
+    <label>
+      <span>证书编号</span>
+      <input type="text" name="cert_no" required>
+    </label>
+
+    <label>
+      <span>证书图片</span>
+      <input type="file" name="image_file" accept="image/*">
+      <span class="muted small" id="image-hint">选择新文件后会自动压缩并上传到 GitHub</span>
+    </label>
+
+    <input type="hidden" name="id">
+    <input type="hidden" name="image">
+
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="record-cancel">取消</button>
+      <button type="submit" class="btn" id="record-save">保存</button>
+    </div>
+    <p class="error" id="record-error" hidden></p>
+  </form>
+</dialog>
+
+<!-- ===== Sponsor dialog ===== -->
+<dialog id="sponsor-dialog" class="record-dialog">
+  <form id="sponsor-form" method="dialog">
+    <h2 id="sponsor-dialog-title">新增赞赏</h2>
+
+    <label>
+      <span>姓名 / 昵称</span>
+      <input type="text" name="name" required>
+    </label>
+
+    <div class="row-2">
+      <label>
+        <span>金额（元）</span>
+        <input type="number" name="amount" step="0.01" min="0" required>
+      </label>
+      <label>
+        <span>日期</span>
+        <input type="date" name="date" required>
+      </label>
+    </div>
+
+    <label>
+      <span>留言（可选）</span>
+      <textarea name="message" rows="3" placeholder="对方留言或备注"></textarea>
+    </label>
+
+    <input type="hidden" name="id">
+
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" id="sponsor-cancel">取消</button>
+      <button type="submit" class="btn" id="sponsor-save">保存</button>
+    </div>
+    <p class="error" id="sponsor-error" hidden></p>
+  </form>
+</dialog>
+
+<dialog id="confirm-dialog" class="confirm-dialog">
+  <p id="confirm-text">确定执行此操作？</p>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-secondary" id="confirm-cancel">取消</button>
+    <button type="button" class="btn btn-danger" id="confirm-ok">确定</button>
+  </div>
+</dialog>
+
+<script src="assets/admin.js" defer></script>
+</body>
+</html>

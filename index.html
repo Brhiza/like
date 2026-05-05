@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e07a3c">
+<title>李柯的公益记录</title>
+<meta name="description" content="李柯的公益捐赠时间线、证书与赞赏名单">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/jpeg" href="assets/avatar.jpeg">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <img class="avatar" src="assets/avatar.jpeg" alt="李柯">
+    <div class="hero-text">
+      <h1>李柯的公益记录</h1>
+      <p class="tagline">点滴汇聚成河，愿温暖一直在路上。</p>
+    </div>
+    <aside class="hero-cta" aria-label="赞赏二维码">
+      <img src="assets/qr-support.png" alt="微信扫码上榜，和李柯支持中国公益事业" class="qr">
+    </aside>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" id="stat-amount">—</div>
+      <div class="stat-label">累计捐赠（元）</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-count">—</div>
+      <div class="stat-label">证书数</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-projects">—</div>
+      <div class="stat-label">公益项目</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-years">—</div>
+      <div class="stat-label">坚持年份</div>
+    </div>
+  </div>
+
+  <div class="sponsors-stats" aria-label="赞赏概览">
+    <div class="stat">
+      <div class="stat-value" id="sp-count">—</div>
+      <div class="stat-label">赞赏人次</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="sp-total">—</div>
+      <div class="stat-label">累计赞赏（元）</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="sp-latest">—</div>
+      <div class="stat-label">最近一笔赞赏</div>
+    </div>
+  </div>
+
+  <nav class="section-nav" role="tablist" aria-label="页面切换">
+    <button type="button" class="section-tab is-active" data-tab="donations" role="tab" aria-selected="true">公益记录</button>
+    <button type="button" class="section-tab" data-tab="sponsors" role="tab" aria-selected="false">赞赏名单</button>
+  </nav>
+</header>
+
+<main class="container">
+
+  <section id="donations" class="page-section" role="tabpanel" aria-labelledby="tab-donations">
+    <div class="filters" aria-label="筛选">
+      <input type="search" id="q" placeholder="搜索项目、基金会或证书编号…" autocomplete="off">
+      <select id="filter-year">
+        <option value="">全部年份</option>
+      </select>
+      <select id="filter-foundation">
+        <option value="">全部基金会</option>
+      </select>
+    </div>
+
+    <div id="timeline" class="timeline" aria-live="polite"></div>
+    <p id="empty" class="empty" hidden>没有匹配的记录。</p>
+  </section>
+
+  <section id="sponsors" class="page-section" role="tabpanel" aria-labelledby="tab-sponsors" hidden>
+    <div class="filters" aria-label="赞赏筛选">
+      <input type="search" id="sp-q" placeholder="搜索姓名或留言…" autocomplete="off">
+      <select id="sp-filter-year">
+        <option value="">全部年份</option>
+      </select>
+      <select id="sp-sort">
+        <option value="date-asc">日期 旧→新</option>
+        <option value="date-desc">日期 新→旧</option>
+        <option value="amount-desc">金额 高→低</option>
+        <option value="amount-asc">金额 低→高</option>
+      </select>
+    </div>
+    <div id="sponsor-list" class="sponsor-list"></div>
+    <p id="sponsor-empty" class="empty" hidden>暂无赞赏记录。</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p class="legal">公益捐赠数据基于公开证书整理；赞赏名单由本人定期手动整理，仅供查阅。</p>
+  <p class="legal"><a href="admin.html">管理</a></p>
+</footer>
+
+<dialog id="lightbox" class="lightbox" aria-label="证书预览">
+  <button class="lightbox-close" type="button" aria-label="关闭">&times;</button>
+  <img id="lightbox-img" alt="">
+  <div class="lightbox-meta" id="lightbox-meta"></div>
+</dialog>
+
+<script src="assets/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Working files for image identification, not part of the deployable site
+.work/
+
+# Cloudflare Pages local dev secrets
+.dev.vars
+.wrangler/
+
+# OS / editor noise
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Node deps if you ever pull in tooling
+node_modules/
