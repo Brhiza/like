@@ -163,6 +163,10 @@
       <input type="file" name="image_file" accept="image/*">
       <span class="muted small" id="image-hint">选择新文件后会自动压缩并上传到 GitHub</span>
     </label>
+    <div class="field-actions">
+      <button type="button" class="btn btn-secondary" id="btn-ai-fill">AI 识别并填表</button>
+      <span class="muted small status-text" id="ai-hint">选择证书图片后，可用 AI 自动提取字段</span>
+    </div>
 
     <input type="hidden" name="id">
     <input type="hidden" name="image">
@@ -200,6 +204,16 @@
       <span>留言（可选）</span>
       <textarea name="message" rows="3" placeholder="对方留言或备注"></textarea>
     </label>
+
+    <label>
+      <span>赞赏截图（可选）</span>
+      <input type="file" name="source_image_file" accept="image/*">
+      <span class="muted small">仅用于 AI 提取，不会随记录保存</span>
+    </label>
+    <div class="field-actions">
+      <button type="button" class="btn btn-secondary" id="btn-sp-ai-fill">AI 识别并填表</button>
+      <span class="muted small status-text" id="sp-ai-hint">选择赞赏截图后，可用 AI 自动提取字段</span>
+    </div>
 
     <input type="hidden" name="id">
 

@@ -19,6 +19,6 @@ export async function onRequestPost({ request, env }) {
   if (!safeEq(password, String(env.ADMIN_PASSWORD))) {
     return json({ error: '密码错误' }, { status: 401 });
   }
-  const cookie = await issueSessionCookie(env, { admin: true });
+  const cookie = await issueSessionCookie(env, request, { admin: true });
   return json({ ok: true }, { headers: { 'Set-Cookie': cookie } });
 }

@@ -1,6 +1,7 @@
 /* Admin-specific styles, layered on top of style.css */
 
 .admin-body { background: var(--warm-50); }
+[hidden] { display: none !important; }
 
 .muted { color: var(--ink-500); }
 .small { font-size: 13px; }
@@ -220,11 +221,24 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   resize: vertical;
 }
 .record-dialog input:focus,
-.record-dialog select:focus { border-color: var(--warm-400); box-shadow: 0 0 0 3px rgba(255,138,69,.15); }
+.record-dialog select:focus,
+.record-dialog textarea:focus { border-color: var(--warm-400); box-shadow: 0 0 0 3px rgba(255,138,69,.15); }
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+.field-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.field-actions .status-text {
+  min-height: 20px;
+}
+.status-text.is-error {
+  color: #c33b1f;
 }
 
 .dialog-actions {

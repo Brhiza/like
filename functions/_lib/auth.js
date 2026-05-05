@@ -65,14 +65,30 @@ export async function getSession(request, env) {
   return verify(env.SESSION_SECRET, getCookie(request));
 }
 
-export async function issueSessionCookie(env, payload = {}) {
-  const now = Math.floor(Date.now() / 1000);
-  const tok = await sign(env.SESSION_SECRET, { ...payload, iat: now, exp: now + TTL_SECONDS });
-  return `${COOKIE_NAME}=${encodeURIComponent(tok)}; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=${TTL_SECONDS}`;
+function isSecureRequest(request) {
+  const forwarded = request?.headers?.get?.('x-forwarded-proto');
+  if (forwarded) return forwarded.split(',')[0].trim() === 'https';
+  try {
+    return new URL(request?.url || '').protocol === 'https:';
+  } catch {
+    return true;
+  }
 }
 
-export function clearCookieHeader() {
-  return `${COOKIE_NAME}=; HttpOnly; Secure; Path=/; SameSite=Lax; Max-Age=0`;
+function sessionCookieAttrs(request, maxAge) {
+  const attrs = ['HttpOnly', 'Path=/', 'SameSite=Lax', `Max-Age=${maxAge}`];
+  if (isSecureRequest(request)) attrs.splice(1, 0, 'Secure');
+  return attrs.join('; ');
+}
+
+export async function issueSessionCookie(env, request, payload = {}) {
+  const now = Math.floor(Date.now() / 1000);
+  const tok = await sign(env.SESSION_SECRET, { ...payload, iat: now, exp: now + TTL_SECONDS });
+  return `${COOKIE_NAME}=${encodeURIComponent(tok)}; ${sessionCookieAttrs(request, TTL_SECONDS)}`;
+}
+
+export function clearCookieHeader(request) {
+  return `${COOKIE_NAME}=; ${sessionCookieAttrs(request, 0)}`;
 }
 
 export function json(data, init = {}) {

@@ -5,6 +5,7 @@
 
   const loginView = $('#login-view');
   const appView = $('#app-view');
+  const loginErrorEl = $('#login-error');
 
   let donations = { records: [], updated: '' };
   let sponsorsData = { sponsors: [], updated: '' };
@@ -13,22 +14,51 @@
   const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
   const fmtUpdated = (u) => u ? new Date(u).toLocaleString('zh-CN', { hour12: false }) : '—';
   const CHANNEL_LABELS = { txgy: '腾讯公益', xwgc: '希望工程', other: '其他' };
+  const MIME_BY_EXT = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' };
 
   // ============ Auth ============
-  async function checkAuth() {
-    const res = await fetch('/api/me', { credentials: 'same-origin' });
-    return res.ok;
+  async function getAuthState() {
+    try {
+      const res = await fetch('/api/me', { credentials: 'same-origin' });
+      if (res.ok) return { ok: true };
+      const data = await res.json().catch(() => ({}));
+      return { ok: false, status: res.status, error: data.error || '' };
+    } catch (e) {
+      return { ok: false, status: 0, error: e.message || '网络异常' };
+    }
   }
 
-  function showLogin() {
+  function setLoginError(msg) {
+    if (!loginErrorEl) return;
+    if (!msg) {
+      loginErrorEl.hidden = true;
+      loginErrorEl.textContent = '';
+      return;
+    }
+    loginErrorEl.hidden = false;
+    loginErrorEl.textContent = msg;
+  }
+
+  function formatAuthError(state) {
+    if (!state) return '登录状态校验失败';
+    if (state.status === 500 && state.error) return `管理接口未配置：${state.error}`;
+    if (state.status === 401) return '登录未生效，请检查 HTTPS / Cookie 配置后重试';
+    if (state.error) return state.error;
+    if (state.status) return `登录状态校验失败 (${state.status})`;
+    return '管理接口暂时不可用，请稍后重试';
+  }
+
+  function showLogin(msg = null) {
     appView.hidden = true;
     loginView.hidden = false;
+    setLoginError(msg);
     setTimeout(() => $('#login-pw')?.focus(), 50);
   }
 
   function showApp() {
     loginView.hidden = true;
     appView.hidden = false;
+    setLoginError(null);
     loadDonations();
     loadSponsors();
   }
@@ -36,8 +66,7 @@
   async function doLogin(ev) {
     ev.preventDefault();
     const pw = $('#login-pw').value;
-    const errEl = $('#login-error');
-    errEl.hidden = true;
+    setLoginError(null);
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
@@ -49,10 +78,13 @@
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error || `登录失败 (${res.status})`);
       }
+      const authState = await getAuthState();
+      if (!authState.ok) {
+        throw new Error(formatAuthError(authState));
+      }
       showApp();
     } catch (e) {
-      errEl.textContent = e.message;
-      errEl.hidden = false;
+      setLoginError(e.message);
     }
   }
 
@@ -156,7 +188,31 @@
   // Donation dialog
   const dlg = $('#record-dialog');
   const form = $('#record-form');
+  const aiFillBtn = $('#btn-ai-fill');
+  const aiHintEl = $('#ai-hint');
   let editingId = null;
+
+  function setStatusText(el, msg, isError = false) {
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('is-error', !!isError);
+  }
+
+  function syncDonationImageUi({ resetAi = false } = {}) {
+    const file = form.elements.image_file?.files?.[0] || null;
+    const currentImage = form.elements.image.value || '';
+    if (file) {
+      $('#image-hint').textContent = `待上传：${file.name}（${fmtSize(file.size)}）`;
+      if (aiFillBtn) aiFillBtn.disabled = false;
+      if (resetAi) setStatusText(aiHintEl, '已选择证书图片，可用 AI 自动提取字段');
+      return;
+    }
+    $('#image-hint').textContent = currentImage
+      ? `当前：${currentImage}（不选择文件则保留）`
+      : '请选择证书图片，将自动压缩并按日期命名上传';
+    if (aiFillBtn) aiFillBtn.disabled = true;
+    if (resetAi) setStatusText(aiHintEl, '选择证书图片后，可用 AI 自动提取字段');
+  }
 
   function openNewDonation() {
     editingId = null;
@@ -167,7 +223,7 @@
     form.elements.id.value = '';
     form.elements.image.value = '';
     form.elements.channel.value = 'xwgc';
-    $('#image-hint').textContent = '请选择证书图片，将自动压缩并按日期命名上传';
+    syncDonationImageUi({ resetAi: true });
     showFormError('#record-error', null);
     dlg.showModal();
   }
@@ -182,7 +238,7 @@
     form.elements.id.value = rec.id;
     form.elements.image.value = rec.image || '';
     form.elements.channel.value = inferChannel(rec.image) || 'xwgc';
-    $('#image-hint').textContent = rec.image ? `当前：${rec.image}（不选择文件则保留）` : '请选择证书图片';
+    syncDonationImageUi({ resetAi: true });
     showFormError('#record-error', null);
     dlg.showModal();
   }
@@ -318,7 +374,20 @@
   // Sponsor dialog
   const spDlg = $('#sponsor-dialog');
   const spForm = $('#sponsor-form');
+  const sponsorAiFillBtn = $('#btn-sp-ai-fill');
+  const sponsorAiHintEl = $('#sp-ai-hint');
   let editingSponsorId = null;
+
+  function syncSponsorImageUi({ resetAi = false } = {}) {
+    const file = spForm.elements.source_image_file?.files?.[0] || null;
+    if (sponsorAiFillBtn) sponsorAiFillBtn.disabled = !file;
+    if (resetAi) {
+      setStatusText(
+        sponsorAiHintEl,
+        file ? '已选择赞赏截图，可用 AI 自动提取字段' : '选择赞赏截图后，可用 AI 自动提取字段',
+      );
+    }
+  }
 
   function openNewSponsor() {
     editingSponsorId = null;
@@ -326,6 +395,7 @@
     spForm.reset();
     spForm.elements.date.value = new Date().toISOString().slice(0, 10);
     spForm.elements.id.value = '';
+    syncSponsorImageUi({ resetAi: true });
     showFormError('#sponsor-error', null);
     spDlg.showModal();
   }
@@ -339,6 +409,7 @@
     spForm.elements.date.value = rec.date || '';
     spForm.elements.message.value = rec.message || '';
     spForm.elements.id.value = rec.id;
+    syncSponsorImageUi({ resetAi: true });
     showFormError('#sponsor-error', null);
     spDlg.showModal();
   }
@@ -447,6 +518,10 @@
     return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
   }
 
+  function mimeFromExt(ext) {
+    return MIME_BY_EXT[(ext || '').toLowerCase()] || 'application/octet-stream';
+  }
+
   async function decodeImage(file) {
     if ('createImageBitmap' in window) {
       try { return await createImageBitmap(file); } catch { /* fallback below */ }
@@ -461,7 +536,14 @@
   }
 
   async function compressImage(file, { maxDim = 1600, quality = 0.85, mime = 'image/jpeg' } = {}) {
-    if (!/^image\//.test(file.type)) return { blob: file, ext: (file.name.split('.').pop() || 'bin').toLowerCase() };
+    const originalExt = (file.name.split('.').pop() || 'bin').toLowerCase();
+    if (!/^image\//.test(file.type)) {
+      return {
+        blob: file,
+        ext: originalExt,
+        mime: file.type || mimeFromExt(originalExt),
+      };
+    }
 
     const bitmap = await decodeImage(file);
     const w0 = bitmap.width, h0 = bitmap.height;
@@ -484,9 +566,18 @@
     if (!blob) throw new Error('压缩失败');
 
     if (blob.size >= file.size && scale === 1) {
-      return { blob: file, ext: (file.name.split('.').pop() || 'bin').toLowerCase(), original: true };
+      return {
+        blob: file,
+        ext: originalExt,
+        mime: file.type || mimeFromExt(originalExt),
+        original: true,
+      };
     }
-    return { blob, ext: mime === 'image/jpeg' ? 'jpg' : 'png' };
+    return {
+      blob,
+      ext: mime === 'image/jpeg' ? 'jpg' : 'png',
+      mime,
+    };
   }
 
   async function uploadImage(file, hintEl, { channel, date } = {}) {
@@ -527,6 +618,139 @@
     return j.path;
   }
 
+  function applyDonationAiResult(extracted) {
+    const applied = [];
+    const textFields = [
+      ['name', '捐赠人'],
+      ['project', '项目名称'],
+      ['foundation', '基金会 / 公益机构'],
+      ['effect', '助力效应'],
+      ['cert_no', '证书编号'],
+    ];
+    for (const [field, label] of textFields) {
+      const value = String(extracted?.[field] ?? '').trim();
+      if (!value || !form.elements[field]) continue;
+      form.elements[field].value = value;
+      applied.push(label);
+    }
+    if (extracted?.amount != null && Number.isFinite(Number(extracted.amount))) {
+      form.elements.amount.value = String(extracted.amount);
+      applied.push('金额');
+    }
+    if (typeof extracted?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(extracted.date)) {
+      form.elements.date.value = extracted.date;
+      applied.push('捐赠日期');
+    }
+    if (extracted?.channel && CHANNEL_LABELS[extracted.channel]) {
+      form.elements.channel.value = extracted.channel;
+      applied.push('捐赠渠道');
+    }
+    return applied;
+  }
+
+  function applySponsorAiResult(extracted) {
+    const applied = [];
+    const name = String(extracted?.name ?? '').trim();
+    if (name) {
+      spForm.elements.name.value = name;
+      applied.push('姓名 / 昵称');
+    }
+    if (extracted?.amount != null && Number.isFinite(Number(extracted.amount))) {
+      spForm.elements.amount.value = String(extracted.amount);
+      applied.push('金额');
+    }
+    if (typeof extracted?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(extracted.date)) {
+      spForm.elements.date.value = extracted.date;
+      applied.push('日期');
+    }
+    const message = String(extracted?.message ?? '').trim();
+    if (message) {
+      spForm.elements.message.value = message;
+      applied.push('留言');
+    }
+    return applied;
+  }
+
+  async function recognizeImageWithAi({ kind, file, button, statusEl, applyResult }) {
+    if (!file) throw new Error('请先选择图片');
+
+    const originalText = button?.textContent || 'AI 识别并填表';
+    if (button) {
+      button.disabled = true;
+      button.textContent = '识别中…';
+    }
+    setStatusText(statusEl, '正在调用 AI 识别图片…');
+
+    try {
+      let prepared;
+      try {
+        prepared = await compressImage(file, { maxDim: 1400, quality: 0.82 });
+      } catch {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        prepared = { blob: file, ext, mime: file.type || mimeFromExt(ext) };
+      }
+
+      const base64 = await fileToBase64(prepared.blob);
+      const res = await fetch('/api/ai/extract', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind,
+          mime_type: prepared.mime || file.type || mimeFromExt(prepared.ext),
+          image_base64: base64,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `识别失败 (${res.status})`);
+
+      const applied = applyResult(data.extracted || {});
+      const note = data.extracted?.notes ? ` 提示：${data.extracted.notes}` : '';
+      const confidence = typeof data.extracted?.confidence === 'number'
+        ? ` 置信度 ${(data.extracted.confidence * 100).toFixed(0)}%。`
+        : '';
+      setStatusText(
+        statusEl,
+        applied.length
+          ? `已回填：${applied.join('、')}。请核对后再保存。${confidence}${note}`.trim()
+          : `识别完成，但没有提取到可回填字段。${note}`.trim(),
+      );
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    }
+  }
+
+  async function recognizeDonationImage() {
+    try {
+      await recognizeImageWithAi({
+        kind: 'donation',
+        file: form.elements.image_file?.files?.[0] || null,
+        button: aiFillBtn,
+        statusEl: aiHintEl,
+        applyResult: applyDonationAiResult,
+      });
+    } catch (e) {
+      setStatusText(aiHintEl, e.message, true);
+    }
+  }
+
+  async function recognizeSponsorImage() {
+    try {
+      await recognizeImageWithAi({
+        kind: 'sponsor',
+        file: spForm.elements.source_image_file?.files?.[0] || null,
+        button: sponsorAiFillBtn,
+        statusEl: sponsorAiHintEl,
+        applyResult: applySponsorAiResult,
+      });
+    } catch (e) {
+      setStatusText(sponsorAiHintEl, e.message, true);
+    }
+  }
+
   function showFormError(sel, msg) {
     const el = $(sel);
     if (!el) return;
@@ -549,6 +773,8 @@
     $('#btn-new').addEventListener('click', openNewDonation);
     $('#adm-q').addEventListener('input', applyDonationFilter);
     $('#record-cancel').addEventListener('click', () => dlg.close());
+    form.elements.image_file.addEventListener('change', () => syncDonationImageUi({ resetAi: true }));
+    aiFillBtn.addEventListener('click', recognizeDonationImage);
     form.addEventListener('submit', saveDonation);
     tbody.addEventListener('click', (e) => {
       const row = e.target.closest('tr[data-id]');
@@ -565,6 +791,8 @@
     $('#btn-sp-new').addEventListener('click', openNewSponsor);
     $('#sp-adm-q').addEventListener('input', applySponsorFilter);
     $('#sponsor-cancel').addEventListener('click', () => spDlg.close());
+    spForm.elements.source_image_file.addEventListener('change', () => syncSponsorImageUi({ resetAi: true }));
+    sponsorAiFillBtn.addEventListener('click', recognizeSponsorImage);
     spForm.addEventListener('submit', saveSponsor);
     spTbody.addEventListener('click', (e) => {
       const row = e.target.closest('tr[data-id]');
@@ -583,8 +811,9 @@
 
   async function init() {
     bind();
-    if (await checkAuth()) showApp();
-    else showLogin();
+    const authState = await getAuthState();
+    if (authState.ok) showApp();
+    else showLogin(authState.status === 500 ? formatAuthError(authState) : null);
   }
   init();
 })();

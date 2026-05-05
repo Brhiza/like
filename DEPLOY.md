@@ -59,6 +59,9 @@ git push -u origin main
 | `GITHUB_BRANCH`    |    | 默认 `main`                                      |
 | `ADMIN_PASSWORD`   | ✅  | 登录管理面板的密码（请使用强密码）                          |
 | `SESSION_SECRET`   | ✅  | 会话签名密钥，随机长字符串。生成：`openssl rand -hex 32` |
+| `OPENAI_API_KEY`   |    | AI 识别使用的 API Key（兼容 OpenAI 格式）                  |
+| `OPENAI_MODEL`     |    | AI 识别模型名，必须支持图片输入                              |
+| `OPENAI_BASE_URL`  |    | AI 接口 Base URL，默认 `https://api.openai.com/v1`         |
 | `COMMITTER_NAME`   |    | 提交作者名（默认 `like-bot`）                      |
 | `COMMITTER_EMAIL`  |    | 提交邮箱（默认 `like-bot@users.noreply.github.com`） |
 
@@ -70,11 +73,12 @@ git push -u origin main
 - **管理面板**：`https://<your-domain>/admin.html`
   1. 输入 `ADMIN_PASSWORD` 登录。
   2. 切换「公益记录 / 赞赏名单」标签页管理两类数据。
-  3. 「+ 新增记录」打开表单，填写信息并选择证书图片 → 保存。
+  3. 「+ 新增记录」或「+ 新增赞赏」打开表单，选择图片后可点击「AI 识别并填表」自动回填，再手动核对后保存。
   4. 后端流程：
      - 图片：`POST /api/upload`（前端先用 Canvas 压缩 ≤1600px / JPEG q=0.85）→ GitHub Contents API → 写入 `images/uploads/`，返回路径。
      - 公益记录：`POST/PUT/DELETE /api/records[/:id]` → 读取 `data/donations.json` → 修改 → 提交回仓库。
      - 赞赏名单：`POST/PUT/DELETE /api/sponsors[/:id]` → 读取 `data/sponsors.json` → 修改 → 提交回仓库。
+     - AI 识别：`POST /api/ai/extract` → 调用兼容 OpenAI 格式的视觉模型 → 返回结构化字段给管理面板回填。
   5. Cloudflare Pages 检测到新 commit，自动重新构建（约 30~60 秒后生效）。
 
 > 提示：因为数据写回 Git 才生效，新增/编辑后展示页会有几十秒延迟。
@@ -101,6 +105,9 @@ GITHUB_REPO=like
 GITHUB_BRANCH=main
 ADMIN_PASSWORD=your-strong-password
 SESSION_SECRET=$(openssl rand -hex 32)
+OPENAI_API_KEY=sk-xxx
+OPENAI_MODEL=gpt-4.1-mini
+OPENAI_BASE_URL=https://api.openai.com/v1
 EOF
 
 wrangler pages dev . --port 8788
@@ -112,10 +119,11 @@ wrangler pages dev . --port 8788
 ## 六、安全说明
 
 - 所有 `/api/*`（除 `login`/`logout`）都通过 `functions/api/_middleware.js` 强制校验签名 cookie。
-- 会话 cookie 使用 HMAC-SHA256 签名，TTL 7 天，HttpOnly + Secure + SameSite=Lax。
+- 会话 cookie 使用 HMAC-SHA256 签名，TTL 7 天，HttpOnly + SameSite=Lax；HTTPS 下自动附带 `Secure`，便于本地调试。
 - `ADMIN_PASSWORD` 比较使用恒定时间算法以减弱时间侧信道。
 - `GITHUB_TOKEN` 仅存在于 Cloudflare 环境变量，浏览器永远拿不到。
 - 上传接口限制图片格式（png/jpg/jpeg/gif/webp）和大小（≤8MB）。
+- AI 识别结果只用于回填表单，不会自动保存；赞赏截图不会写入仓库。
 
 ## 七、新增字段或基金会
 
@@ -129,7 +137,9 @@ wrangler pages dev . --port 8788
 | 现象                                | 排查                                                                  |
 |----------------------------------|---------------------------------------------------------------------|
 | 登录返回 500「admin not configured」   | 确认 `ADMIN_PASSWORD` 与 `SESSION_SECRET` 都已配置                              |
+| 登录成功但刷新后又回到登录页               | 检查当前是否通过 HTTPS 访问；本地请使用 `wrangler pages dev`，并确认浏览器未拦截 Cookie |
 | 保存返回「GitHub writeFile … 401/403」 | PAT 没有 `Contents: write` 权限或选错仓库                              |
 | 保存返回「GitHub writeFile … 409」     | 极少数并发冲突，本系统会自动重试一次；再失败请刷新后重试                                       |
 | 新记录不出现在展示页                       | Cloudflare Pages 还在重新构建。打开 Cloudflare 控制台 → Deployments 查看进度 |
 | 上传图片 413                         | 文件大于 8MB，先压缩再上传（可在 `functions/api/upload.js` 调整 `MAX_BYTES`）        |
+| AI 识别返回 500/502                    | 确认 `OPENAI_API_KEY`、`OPENAI_MODEL`、`OPENAI_BASE_URL` 正确，且模型支持图片输入            |
