@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updated": "2026-05-06T15:34:33.950Z",
-  "count": 36,
-  "total_amount": 13188.24,
+  "updated": "2026-05-06T15:36:53.672Z",
+  "count": 37,
+  "total_amount": 13189.24,
   "sponsors": [
     {
       "id": "sp_82504e8c32",
@@ -15,6 +15,13 @@
       "id": "sp_a448e3b7ad",
       "name": "Null",
       "amount": 20,
+      "date": "2026-05-06",
+      "message": null
+    },
+    {
+      "id": "sp_04035023ab",
+      "name": "全宇宙无敌欢👾",
+      "amount": 1,
       "date": "2026-05-06",
       "message": null
     },
