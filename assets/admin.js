@@ -16,6 +16,38 @@
   const CHANNEL_LABELS = { txgy: '腾讯公益', xwgc: '希望工程', other: '其他' };
   const MIME_BY_EXT = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' };
 
+  // ============ Toast ============
+  let toastEl = null;
+  let toastTimer = null;
+  function toast(msg, type = 'info', ms = 2200) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.className = `toast toast-${type} is-show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('is-show'), ms);
+  }
+
+  function setBusy(btn, busyText) {
+    if (!btn) return () => {};
+    const originalText = btn.textContent;
+    const originalDisabled = btn.disabled;
+    btn.disabled = true;
+    btn.classList.add('is-busy');
+    if (busyText) btn.textContent = busyText;
+    return (newText) => {
+      if (newText != null) btn.textContent = newText;
+      else {
+        btn.disabled = originalDisabled;
+        btn.classList.remove('is-busy');
+        btn.textContent = originalText;
+      }
+    };
+  }
+
   // ============ Auth ============
   async function getAuthState() {
     try {
@@ -65,6 +97,8 @@
 
   async function doLogin(ev) {
     ev.preventDefault();
+    const btn = ev.submitter || $('#login-form button[type="submit"]');
+    const update = setBusy(btn, '登录中…');
     const pw = $('#login-pw').value;
     setLoginError(null);
     try {
@@ -85,6 +119,8 @@
       showApp();
     } catch (e) {
       setLoginError(e.message);
+    } finally {
+      update();
     }
   }
 
@@ -254,7 +290,8 @@
   async function saveDonation(ev) {
     ev.preventDefault();
     const btn = $('#record-save');
-    btn.disabled = true;
+    const isEdit = !!editingId;
+    const update = setBusy(btn, '保存中…');
     showFormError('#record-error', null);
     try {
       const fd = new FormData(form);
@@ -266,7 +303,9 @@
 
       if (file && file instanceof File && file.size > 0) {
         if (!date) throw new Error('请先填写捐赠日期再上传图片');
+        update('上传图片中…');
         imagePath = await uploadImage(file, $('#image-hint'), { channel, date });
+        update('保存中…');
       } else if (!imagePath) {
         throw new Error('请上传证书图片');
       }
@@ -299,11 +338,13 @@
       }
 
       dlg.close();
+      toast(isEdit ? '记录已更新' : '记录已新增', 'success');
       await loadDonations();
     } catch (e) {
       showFormError('#record-error', e.message);
+      toast(e.message || '保存失败', 'error', 3200);
     } finally {
-      btn.disabled = false;
+      update();
     }
   }
 
@@ -417,7 +458,8 @@
   async function saveSponsor(ev) {
     ev.preventDefault();
     const btn = $('#sponsor-save');
-    btn.disabled = true;
+    const isEdit = !!editingSponsorId;
+    const update = setBusy(btn, '保存中…');
     showFormError('#sponsor-error', null);
     try {
       const fd = new FormData(spForm);
@@ -441,11 +483,13 @@
         throw new Error(j.error || `保存失败 (${res.status})`);
       }
       spDlg.close();
+      toast(isEdit ? '赞赏已更新' : '赞赏已新增', 'success');
       await loadSponsors();
     } catch (e) {
       showFormError('#sponsor-error', e.message);
+      toast(e.message || '保存失败', 'error', 3200);
     } finally {
-      btn.disabled = false;
+      update();
     }
   }
 
@@ -462,8 +506,14 @@
   async function runConfirmed() {
     const fn = pendingAction;
     pendingAction = null;
-    confirmDlg.close();
-    if (typeof fn === 'function') await fn();
+    const okBtn = $('#confirm-ok');
+    const update = setBusy(okBtn, '处理中…');
+    try {
+      if (typeof fn === 'function') await fn();
+    } finally {
+      update();
+      confirmDlg.close();
+    }
   }
 
   function askDeleteDonation(rec) {
@@ -476,9 +526,11 @@
           const j = await res.json().catch(() => ({}));
           throw new Error(j.error || `删除失败 (${res.status})`);
         }
+        toast('记录已删除', 'success');
         await loadDonations();
       } catch (e) {
         setDonationStatus(`删除失败：${e.message}`);
+        toast(e.message || '删除失败', 'error', 3200);
       }
     });
   }
@@ -493,9 +545,11 @@
           const j = await res.json().catch(() => ({}));
           throw new Error(j.error || `删除失败 (${res.status})`);
         }
+        toast('赞赏已删除', 'success');
         await loadSponsors();
       } catch (e) {
         setSponsorStatus(`删除失败：${e.message}`);
+        toast(e.message || '删除失败', 'error', 3200);
       }
     });
   }

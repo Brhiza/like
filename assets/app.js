@@ -299,24 +299,37 @@
       const panel = document.getElementById(tab.dataset.tab);
       if (panel) panels.set(tab.dataset.tab, panel);
     }
+    const defaultTab = tabs[0]?.dataset.tab;
 
-    const activate = (name) => {
+    const activate = (name, { updateHash = true } = {}) => {
       for (const tab of tabs) {
         const on = tab.dataset.tab === name;
         tab.classList.toggle('is-active', on);
         tab.setAttribute('aria-selected', on ? 'true' : 'false');
       }
       for (const [id, panel] of panels) panel.hidden = id !== name;
-      try { history.replaceState(null, '', `#${name}`); } catch {}
+      if (updateHash) {
+        const url = name === defaultTab
+          ? location.pathname + location.search
+          : `${location.pathname}${location.search}#${name}`;
+        try { history.replaceState(null, '', url); } catch {}
+      }
       if (name === 'sponsors') {
         requestAnimationFrame(() => layoutSponsors());
       }
     };
 
-    const initial = panels.has(location.hash.replace('#', ''))
-      ? location.hash.replace('#', '')
-      : tabs[0]?.dataset.tab;
-    if (initial) activate(initial);
+    const fragment = location.hash.replace('#', '');
+    const initial = panels.has(fragment) ? fragment : defaultTab;
+    if (initial) {
+      activate(initial, { updateHash: false });
+      // If the URL hash pointed at the default tab (or didn't match), strip it
+      // so the browser doesn't auto-scroll past the hero on next reload.
+      if (initial === defaultTab && location.hash) {
+        try { history.replaceState(null, '', location.pathname + location.search); } catch {}
+        window.scrollTo(0, 0);
+      }
+    }
 
     for (const tab of tabs) {
       tab.addEventListener('click', () => activate(tab.dataset.tab));
