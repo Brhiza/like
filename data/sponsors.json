@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-05-06T12:10:44.207Z",
-  "count": 35,
-  "total_amount": 3188.24,
+  "updated": "2026-05-06T15:34:33.950Z",
+  "count": 36,
+  "total_amount": 13188.24,
   "sponsors": [
+    {
+      "id": "sp_82504e8c32",
+      "name": "李诗诗",
+      "amount": 10000,
+      "date": "2026-05-06",
+      "message": null
+    },
     {
       "id": "sp_a448e3b7ad",
       "name": "Null",
