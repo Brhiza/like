@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-05-09T07:53:11.819Z",
+  "updated": "2026-05-09T07:53:39.706Z",
   "count": 38,
   "total_amount": 13190.24,
   "sponsors": [
@@ -10,13 +10,6 @@
       "amount": 1,
       "date": "2026-05-09",
       "message": "叙说可以一直做下去吗?…·…（不更新也没\n事）感觉我有点脸厚哈哈"
-    },
-    {
-      "id": "sp_82504e8c32",
-      "name": "李诗诗",
-      "amount": 10000,
-      "date": "2026-05-06",
-      "message": null
     },
     {
       "id": "sp_a448e3b7ad",
@@ -268,6 +261,13 @@
       "name": "*L",
       "amount": 9.9,
       "date": "2025-09-28",
+      "message": null
+    },
+    {
+      "id": "sp_82504e8c32",
+      "name": "李诗诗",
+      "amount": 10000,
+      "date": "2025-05-06",
       "message": null
     }
   ]
