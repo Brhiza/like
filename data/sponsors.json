@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-05-09T07:53:39.706Z",
-  "count": 38,
-  "total_amount": 13190.24,
+  "updated": "2026-05-10T13:47:35.440Z",
+  "count": 39,
+  "total_amount": 13195.24,
   "sponsors": [
+    {
+      "id": "sp_c384c4433a",
+      "name": "Water",
+      "amount": 5,
+      "date": "2026-05-10",
+      "message": "感谢你制作了一个免费的ai聊天应用，希望可以一直做下去。"
+    },
     {
       "id": "sp_652c196c47",
       "name": "小天才🍥",
