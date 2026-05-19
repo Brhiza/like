@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-05-19T10:24:58.969Z",
-  "count": 41,
-  "total_amount": 13200.25,
+  "updated": "2026-05-19T10:25:11.475Z",
+  "count": 42,
+  "total_amount": 13220.25,
   "sponsors": [
+    {
+      "id": "sp_c07c3bf320",
+      "name": "匿名",
+      "amount": 20,
+      "date": "2026-05-19",
+      "message": null
+    },
     {
       "id": "sp_796ea3e167",
       "name": "匿名",
