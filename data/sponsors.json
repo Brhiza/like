@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-05-19T10:25:11.475Z",
-  "count": 42,
-  "total_amount": 13220.25,
+  "updated": "2026-05-23T06:07:45.671Z",
+  "count": 43,
+  "total_amount": 13221.25,
   "sponsors": [
+    {
+      "id": "sp_10cea35ff6",
+      "name": "匿名",
+      "amount": 1,
+      "date": "2026-05-22",
+      "message": "这个模型真的特别萌啊。。"
+    },
     {
       "id": "sp_c07c3bf320",
       "name": "匿名",
