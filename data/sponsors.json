@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-05-23T06:07:45.671Z",
-  "count": 43,
-  "total_amount": 13221.25,
+  "updated": "2026-05-23T06:08:10.518Z",
+  "count": 44,
+  "total_amount": 13222.25,
   "sponsors": [
+    {
+      "id": "sp_9ccc91f565",
+      "name": "匿名",
+      "amount": 1,
+      "date": "2026-05-23",
+      "message": "老师天天开心~（不为别的送个祝福）"
+    },
     {
       "id": "sp_10cea35ff6",
       "name": "匿名",
