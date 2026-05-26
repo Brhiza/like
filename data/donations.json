@@ -1,9 +1,21 @@
 {
   "version": 1,
-  "updated": "2026-05-04T23:50:43Z",
-  "count": 107,
-  "total_amount": 70808.9,
+  "updated": "2026-05-26T07:14:47.610Z",
+  "count": 108,
+  "total_amount": 75808.9,
   "records": [
+    {
+      "id": "2026052654696682",
+      "name": "李柯",
+      "project": "希望工程1+1助学行动",
+      "foundation": "中国青少年发展基金会",
+      "amount": 5000,
+      "amount_unit": "元",
+      "effect": null,
+      "date": "2026-05-26",
+      "cert_no": "2026052654696682",
+      "image": "images/xwgc/2026-05-26.jpg"
+    },
     {
       "name": "李柯",
       "project": "希望工程1+1助学行动",
