@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-05-23T06:08:10.518Z",
-  "count": 44,
-  "total_amount": 13222.25,
+  "updated": "2026-06-03T03:26:50.642Z",
+  "count": 45,
+  "total_amount": 13242.25,
   "sponsors": [
+    {
+      "id": "sp_753bc3dc93",
+      "name": "AAA摆烂冠军🏆",
+      "amount": 20,
+      "date": "2026-06-03",
+      "message": "感谢"
+    },
     {
       "id": "sp_9ccc91f565",
       "name": "匿名",
