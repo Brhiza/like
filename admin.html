@@ -52,6 +52,7 @@
       <div class="admin-toolbar">
         <input type="search" id="adm-q" placeholder="搜索项目、基金会、证书编号…">
         <button id="btn-new" class="btn">+ 新增记录</button>
+        <button id="btn-batch" class="btn btn-secondary">批量新增</button>
       </div>
       <p class="muted small" id="adm-status"></p>
 
@@ -85,6 +86,7 @@
       <div class="admin-toolbar">
         <input type="search" id="sp-adm-q" placeholder="搜索姓名或留言…">
         <button id="btn-sp-new" class="btn">+ 新增赞赏</button>
+        <button id="btn-sp-batch" class="btn btn-secondary">批量新增</button>
       </div>
       <p class="muted small" id="sp-adm-status"></p>
 
@@ -230,6 +232,83 @@
   <div class="dialog-actions">
     <button type="button" class="btn btn-secondary" id="confirm-cancel">取消</button>
     <button type="button" class="btn btn-danger" id="confirm-ok">确定</button>
+  </div>
+</dialog>
+
+<!-- ===== Batch donation dialog ===== -->
+<dialog id="batch-dialog" class="batch-dialog">
+  <div class="batch-head">
+    <h2>批量新增公益记录</h2>
+    <p class="muted small">选择多张证书图片让 AI 自动识别，或手动添加多行后一并保存。</p>
+  </div>
+  <div class="batch-toolbar">
+    <label class="btn btn-secondary">
+      <input type="file" id="batch-files" accept="image/*" multiple hidden>
+      上传多张图片（AI 识别）
+    </label>
+    <button type="button" class="btn btn-secondary" id="batch-add-row">+ 添加空白行</button>
+    <span class="muted small status-text" id="batch-hint">提示：每张图会自动压缩并上传到 GitHub。</span>
+  </div>
+  <div class="batch-table-wrap">
+    <table class="batch-table">
+      <thead>
+        <tr>
+          <th style="width:90px">图片</th>
+          <th>捐赠人</th>
+          <th>项目</th>
+          <th>渠道</th>
+          <th>基金会</th>
+          <th>金额</th>
+          <th>日期</th>
+          <th>助力效应</th>
+          <th>证书编号</th>
+          <th>状态</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="batch-tbody"></tbody>
+    </table>
+  </div>
+  <p class="error" id="batch-error" hidden></p>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-secondary" id="batch-cancel">取消</button>
+    <button type="button" class="btn" id="batch-save">保存全部</button>
+  </div>
+</dialog>
+
+<!-- ===== Batch sponsor dialog ===== -->
+<dialog id="sp-batch-dialog" class="batch-dialog">
+  <div class="batch-head">
+    <h2>批量新增赞赏</h2>
+    <p class="muted small">选择多张赞赏截图让 AI 自动识别，或手动添加多行后一并保存。</p>
+  </div>
+  <div class="batch-toolbar">
+    <label class="btn btn-secondary">
+      <input type="file" id="sp-batch-files" accept="image/*" multiple hidden>
+      上传多张截图（AI 识别）
+    </label>
+    <button type="button" class="btn btn-secondary" id="sp-batch-add-row">+ 添加空白行</button>
+    <span class="muted small status-text" id="sp-batch-hint">提示：赞赏截图仅用于 AI 提取，不会保存。</span>
+  </div>
+  <div class="batch-table-wrap">
+    <table class="batch-table">
+      <thead>
+        <tr>
+          <th>姓名 / 昵称</th>
+          <th>金额</th>
+          <th>日期</th>
+          <th>留言</th>
+          <th>状态</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="sp-batch-tbody"></tbody>
+    </table>
+  </div>
+  <p class="error" id="sp-batch-error" hidden></p>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-secondary" id="sp-batch-cancel">取消</button>
+    <button type="button" class="btn" id="sp-batch-save">保存全部</button>
   </div>
 </dialog>
 
