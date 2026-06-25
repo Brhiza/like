@@ -253,6 +253,121 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
 }
 .confirm-dialog p { margin: 0 0 16px; font-size: 15px; }
 
+/* ====== Batch dialog ====== */
+.batch-dialog {
+  max-width: 1200px;
+  width: 96vw;
+  max-height: 92vh;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.batch-head h2 {
+  margin: 0 0 4px;
+  color: var(--warm-700);
+  font-size: 20px;
+}
+.batch-head p { margin: 0; }
+.batch-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.batch-toolbar .status-text { flex: 1; min-width: 200px; }
+.batch-table-wrap {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  min-height: 220px;
+}
+.batch-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.batch-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--warm-50);
+  color: var(--warm-700);
+  font-weight: 600;
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+  z-index: 1;
+}
+.batch-table tbody td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.batch-table tbody tr:last-child td { border-bottom: none; }
+.batch-table input,
+.batch-table select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+.batch-table input:focus,
+.batch-table select:focus { border-color: var(--warm-400); box-shadow: 0 0 0 2px rgba(255,138,69,.15); }
+.batch-table input[name="amount"] { min-width: 80px; }
+.batch-table input[name="date"] { min-width: 130px; }
+.batch-table input[name="cert_no"],
+.batch-table input[name="project"],
+.batch-table input[name="foundation"] { min-width: 140px; }
+.batch-table .thumb-cell {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-50);
+  border-radius: 8px;
+  overflow: hidden;
+  color: var(--ink-500);
+  font-size: 11px;
+  text-align: center;
+}
+.batch-table .thumb-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.batch-table .row-status {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.batch-table .row-status.is-ok { color: #1f7a3a; }
+.batch-table .row-status.is-error { color: #c33b1f; }
+.batch-table .row-status.is-busy { color: var(--warm-600); }
+.batch-table .btn-row-del {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: #c33b1f;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 6px;
+}
+.batch-table .btn-row-del:hover { color: #a02c12; }
+
+@media (max-width: 720px) {
+  .batch-dialog { padding: 16px; }
+  .batch-table { min-width: 900px; }
+}
+
 /* ====== Busy button + spinner ====== */
 .btn.is-busy {
   pointer-events: none;
@@ -319,4 +434,11 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
     background: var(--card);
     color: var(--ink-900);
   }
+  .batch-table-wrap { background: var(--card); }
+  .batch-table input,
+  .batch-table select {
+    background: var(--card);
+    color: var(--ink-900);
+  }
+  .batch-table .thumb-cell { background: rgba(255,255,255,.04); }
 }
