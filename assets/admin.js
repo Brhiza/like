@@ -906,6 +906,22 @@
     for (const row of batchRows) readBatchRowFromDom(row.id);
   }
 
+  // Sort batch rows the same way the backend does: date desc, then cert_no desc.
+  // Rows without a date are pushed to the bottom so the user notices them.
+  function sortBatchRowsByDate() {
+    batchRows.sort((a, b) => {
+      const da = a.fields.date || '';
+      const db = b.fields.date || '';
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      if (da !== db) return db.localeCompare(da);
+      const ca = String(a.fields.cert_no || '');
+      const cb = String(b.fields.cert_no || '');
+      return cb.localeCompare(ca);
+    });
+  }
+
   function openBatchDonation() {
     batchRows = [];
     batchRowSeq = 0;
@@ -962,7 +978,9 @@
       }
     };
     await Promise.all([worker(), worker(), worker()]);
-    setStatusText(batchHintEl, `AI 识别完成:成功 ${okCount} 张,失败 ${errCount} 张。请核对后点「保存全部」。`);
+    sortBatchRowsByDate();
+    renderBatchRows();
+    setStatusText(batchHintEl, `AI 识别完成:成功 ${okCount} 张,失败 ${errCount} 张,已按日期排序。请核对后点「保存全部」。`);
   }
 
   function applyExtractedToRow(row, extracted) {
@@ -1016,6 +1034,8 @@
 
   async function saveBatchDonation() {
     syncAllBatchRowsFromDom();
+    sortBatchRowsByDate();
+    renderBatchRows();
     showFormError('#batch-error', null);
     if (!batchRows.length) {
       showFormError('#batch-error', '请至少添加一条记录');
@@ -1176,6 +1196,19 @@
     }
   }
 
+  // Sort sponsor batch rows: date desc, then amount desc. Empty dates last.
+  function sortSpBatchRowsByDate() {
+    spBatchRows.sort((a, b) => {
+      const da = a.fields.date || '';
+      const db = b.fields.date || '';
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      if (da !== db) return db.localeCompare(da);
+      return (Number(b.fields.amount) || 0) - (Number(a.fields.amount) || 0);
+    });
+  }
+
   function openBatchSponsor() {
     spBatchRows = [];
     spBatchRowSeq = 0;
@@ -1240,11 +1273,15 @@
       }
     };
     await Promise.all([worker(), worker(), worker()]);
-    setStatusText(spBatchHintEl, `AI 识别完成:成功 ${okCount} 张,失败 ${errCount} 张。请核对后点「保存全部」。`);
+    sortSpBatchRowsByDate();
+    renderSpBatchRows();
+    setStatusText(spBatchHintEl, `AI 识别完成:成功 ${okCount} 张,失败 ${errCount} 张,已按日期排序。请核对后点「保存全部」。`);
   }
 
   async function saveBatchSponsor() {
     syncAllSpBatchRowsFromDom();
+    sortSpBatchRowsByDate();
+    renderSpBatchRows();
     showFormError('#sp-batch-error', null);
     if (!spBatchRows.length) {
       showFormError('#sp-batch-error', '请至少添加一条赞赏');
@@ -1342,6 +1379,14 @@
       }
       batchRows = [];
     });
+    // Re-sort when the user finishes editing a date field
+    batchTbody.addEventListener('change', (e) => {
+      if (e.target.matches('input[name="date"]')) {
+        syncAllBatchRowsFromDom();
+        sortBatchRowsByDate();
+        renderBatchRows();
+      }
+    });
     batchTbody.addEventListener('click', (e) => {
       if (e.target.closest('[data-act="del-row"]')) {
         const tr = e.target.closest('tr[data-row]');
@@ -1390,6 +1435,14 @@
     $('#sp-batch-cancel').addEventListener('click', () => spBatchDlg.close());
     $('#sp-batch-save').addEventListener('click', saveBatchSponsor);
     spBatchDlg.addEventListener('close', () => { spBatchRows = []; });
+    // Re-sort when the user finishes editing a sponsor's date
+    spBatchTbody.addEventListener('change', (e) => {
+      if (e.target.matches('input[name="date"]')) {
+        syncAllSpBatchRowsFromDom();
+        sortSpBatchRowsByDate();
+        renderSpBatchRows();
+      }
+    });
     spBatchTbody.addEventListener('click', (e) => {
       if (e.target.closest('[data-act="del-row"]')) {
         const tr = e.target.closest('tr[data-row]');
