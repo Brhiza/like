@@ -1,9 +1,65 @@
 {
   "version": 1,
-  "updated": "2026-06-06T13:50:21.768Z",
-  "count": 46,
-  "total_amount": 13243.25,
+  "updated": "2026-06-25T09:39:49.026Z",
+  "count": 54,
+  "total_amount": 13462.25,
   "sponsors": [
+    {
+      "id": "sp_7acadce268",
+      "name": "ToT",
+      "amount": 1,
+      "date": "2026-06-25",
+      "message": null
+    },
+    {
+      "id": "sp_0193f37ee1",
+      "name": "匿名",
+      "amount": 1,
+      "date": "2026-06-25",
+      "message": "姐姐，感觉最近有点卡，能不能优化一下"
+    },
+    {
+      "id": "sp_951ed90246",
+      "name": "匿名",
+      "amount": 5,
+      "date": "2026-06-21",
+      "message": null
+    },
+    {
+      "id": "sp_40a0fee672",
+      "name": "Huppert",
+      "amount": 200,
+      "date": "2026-06-20",
+      "message": "祝你生日快乐，生活美满。"
+    },
+    {
+      "id": "sp_cb6ae55654",
+      "name": "怀霜",
+      "amount": 1,
+      "date": "2026-06-19",
+      "message": null
+    },
+    {
+      "id": "sp_4fe9057738",
+      "name": "AYi",
+      "amount": 5,
+      "date": "2026-06-14",
+      "message": "😳😳😳😳特别好太强了😭"
+    },
+    {
+      "id": "sp_0e3f1cafda",
+      "name": "H",
+      "amount": 1,
+      "date": "2026-06-12",
+      "message": null
+    },
+    {
+      "id": "sp_7fa5f1f940",
+      "name": "Yujo💫",
+      "amount": 5,
+      "date": "2026-06-10",
+      "message": null
+    },
     {
       "id": "sp_4ac1f5e2ad",
       "name": "匿名",
