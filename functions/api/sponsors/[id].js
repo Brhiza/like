@@ -4,13 +4,12 @@ import { updateSponsors } from '../../_lib/github.js';
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 function normalize(input, { existingId }) {
-  if (!input?.name || String(input.name).trim() === '') throw new Error('字段 name 不能为空');
   if (input.amount === '' || input.amount == null) throw new Error('字段 amount 不能为空');
   const amount = Number(input.amount);
   if (!Number.isFinite(amount) || amount < 0) throw new Error('金额格式错误');
   if (!input.date || !DATE_RE.test(String(input.date).trim())) throw new Error('日期格式应为 YYYY-MM-DD');
 
-  const name = String(input.name).trim();
+  const name = String(input?.name ?? '').trim() || '匿名';
   const date = String(input.date).trim();
   const message = input.message == null || String(input.message).trim() === ''
     ? null

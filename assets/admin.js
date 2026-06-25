@@ -465,7 +465,7 @@
       const fd = new FormData(spForm);
       const sponsor = {
         id: fd.get('id') || undefined,
-        name: fd.get('name')?.trim(),
+        name: fd.get('name')?.trim() || '匿名',
         amount: Number(fd.get('amount')),
         date: fd.get('date'),
         message: fd.get('message')?.trim() || null,
@@ -1144,7 +1144,7 @@
       const statusClass = row.statusType ? `is-${row.statusType}` : '';
       return `
       <tr data-row="${row.id}">
-        <td><input name="name" value="${escapeHtml(f.name)}"></td>
+        <td><input name="name" value="${escapeHtml(f.name)}" placeholder="留空=匿名"></td>
         <td><input name="amount" type="number" step="0.01" min="0" value="${escapeHtml(f.amount)}"></td>
         <td><input name="date" type="date" value="${escapeHtml(f.date)}"></td>
         <td><input name="message" value="${escapeHtml(f.message)}"></td>
@@ -1253,7 +1253,6 @@
     for (let i = 0; i < spBatchRows.length; i++) {
       const f = spBatchRows[i].fields;
       const missing = [];
-      if (!f.name?.trim()) missing.push('姓名');
       if (f.amount === '' || f.amount == null || !Number.isFinite(Number(f.amount))) missing.push('金额');
       if (!f.date?.trim()) missing.push('日期');
       if (missing.length) {
@@ -1266,7 +1265,7 @@
     const update = setBusy(saveBtn, '保存中…');
     try {
       const sponsors = spBatchRows.map(row => ({
-        name: row.fields.name.trim(),
+        name: row.fields.name?.trim() || '匿名',
         amount: Number(row.fields.amount),
         date: row.fields.date.trim(),
         message: row.fields.message?.trim() || null,
