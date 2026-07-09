@@ -1,9 +1,21 @@
 {
   "version": 1,
-  "updated": "2026-05-26T07:14:47.610Z",
-  "count": 108,
-  "total_amount": 75808.9,
+  "updated": "2026-07-09T07:25:09.931Z",
+  "count": 109,
+  "total_amount": 76808.9,
   "records": [
+    {
+      "id": "5L5V86RF9BJ0E03N",
+      "name": "李柯",
+      "project": "备灾救灾 赈济解困",
+      "foundation": "中国红十字基金会",
+      "amount": 1000,
+      "amount_unit": "元",
+      "effect": "为受灾家庭带来26天生活物资",
+      "date": "2026-07-07",
+      "cert_no": "5L5V86RF9BJ0E03N",
+      "image": "images/other/2026-07-07.jpg"
+    },
     {
       "id": "2026052654696682",
       "name": "李柯",
