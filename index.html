@@ -7,19 +7,42 @@
 <title>李柯的公益记录</title>
 <meta name="description" content="李柯的公益捐赠时间线、证书、赞赏名单与个人项目">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="icon" type="image/jpeg" href="assets/avatar.jpeg">
+<link rel="icon" type="image/png" href="assets/avatar.png">
 </head>
 <body>
 
 <header class="hero">
   <div class="hero-inner">
-    <img class="avatar" src="assets/avatar.jpeg" alt="李柯">
+    <img class="avatar" src="assets/avatar.png" alt="李柯">
     <div class="hero-text">
       <h1>李柯的公益记录</h1>
       <p class="tagline">点滴汇聚成河，愿温暖一直在路上。</p>
     </div>
-    <aside class="hero-cta" aria-label="赞赏二维码">
-      <img src="assets/qr-support.png" alt="微信扫码上榜，和李柯支持中国公益事业" class="qr">
+    <aside class="hero-cta" aria-label="扫码联系与支持公益">
+      <article class="qr-card">
+        <button type="button" class="qr-preview" data-image="assets/qr-reward.png" data-title="微信赞赏" aria-label="放大查看微信赞赏二维码">
+          <img src="assets/qr-reward.png" alt="微信赞赏二维码" class="qr">
+        </button>
+        <h2>微信赞赏</h2>
+        <p>赞赏后可在名单展示</p>
+        <button type="button" class="qr-open" data-image="assets/qr-reward.png" data-title="微信赞赏">放大扫码</button>
+      </article>
+      <article class="qr-card">
+        <button type="button" class="qr-preview" data-image="assets/qr-charity.png" data-title="希望工程一起捐" aria-label="放大查看希望工程一起捐二维码">
+          <img src="assets/qr-charity.png" alt="希望工程一起捐团队二维码" class="qr">
+        </button>
+        <h2>希望工程</h2>
+        <p>加入一起捐团队</p>
+        <button type="button" class="qr-open" data-image="assets/qr-charity.png" data-title="希望工程一起捐">放大扫码</button>
+      </article>
+      <article class="qr-card">
+        <button type="button" class="qr-preview" data-image="assets/qr-wechat.png" data-title="添加我的微信" aria-label="放大查看个人微信二维码">
+          <img src="assets/qr-wechat.png" alt="李柯的个人微信二维码" class="qr">
+        </button>
+        <h2>添加微信</h2>
+        <p>交流项目与公益信息</p>
+        <button type="button" class="qr-open" data-image="assets/qr-wechat.png" data-title="添加我的微信">放大扫码</button>
+      </article>
     </aside>
   </div>
 
@@ -132,7 +155,7 @@
   </section>
 </main>
 
-<dialog id="lightbox" class="lightbox" aria-label="证书预览">
+<dialog id="lightbox" class="lightbox" aria-label="图片预览">
   <button class="lightbox-close" type="button" aria-label="关闭">&times;</button>
   <img id="lightbox-img" alt="">
   <div class="lightbox-meta" id="lightbox-meta"></div>

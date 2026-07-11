@@ -17,10 +17,21 @@
   const spQInput = $('#sp-q');
   const spYearSelect = $('#sp-filter-year');
   const spSortSelect = $('#sp-sort');
+  const heroInner = $('.hero-inner');
+  const aboutSectionInner = $('.about-section-inner');
+  const heroCta = $('.hero-cta');
 
   let allRecords = [];
   let allSponsors = [];
   const sponsorFilters = { q: '', year: '', sort: 'date-asc' };
+
+  function placeQrSection() {
+    if (!heroCta || !heroInner || !aboutSectionInner) return;
+    const target = window.matchMedia('(max-width: 720px)').matches
+      ? aboutSectionInner
+      : heroInner;
+    if (heroCta.parentElement !== target) target.appendChild(heroCta);
+  }
 
   const fmtAmount = (n) => {
     if (n == null) return '—';
@@ -168,6 +179,14 @@
       ${record.effect ? `<div>助力效应：${escapeHtml(record.effect)}</div>` : ''}
       <div style="opacity:0.7;font-size:12px;margin-top:6px">证书编号：${escapeHtml(record.cert_no)}</div>
     `;
+    if (typeof lightbox.showModal === 'function') lightbox.showModal();
+    else lightbox.setAttribute('open', '');
+  }
+
+  function openImagePreview(image, title) {
+    lightboxImg.src = image;
+    lightboxImg.alt = title;
+    lightboxMeta.innerHTML = `<div><strong>${escapeHtml(title)}</strong></div><div>长按图片保存，或使用另一台设备扫码。</div>`;
     if (typeof lightbox.showModal === 'function') lightbox.showModal();
     else lightbox.setAttribute('open', '');
   }
@@ -358,7 +377,10 @@
     let resizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(layoutSponsors, 100);
+      resizeTimer = setTimeout(() => {
+        placeQrSection();
+        layoutSponsors();
+      }, 100);
     });
 
     timelineEl.addEventListener('click', (e) => {
@@ -376,6 +398,12 @@
       const id = card.dataset.id;
       const rec = allRecords.find(r => r.id === id);
       if (rec) openLightbox(rec);
+    });
+
+    document.querySelector('.hero-cta')?.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-image]');
+      if (!trigger) return;
+      openImagePreview(trigger.dataset.image, trigger.dataset.title);
     });
 
     lightboxClose.addEventListener('click', closeLightbox);
@@ -423,6 +451,7 @@
   }
 
   function init() {
+    placeQrSection();
     bindEvents();
     setupSectionNav();
     loadDonations();
