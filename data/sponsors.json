@@ -1,9 +1,23 @@
 {
   "version": 1,
-  "updated": "2026-07-03T06:49:49.492Z",
-  "count": 57,
-  "total_amount": 13583.25,
+  "updated": "2026-07-11T14:11:55.233Z",
+  "count": 59,
+  "total_amount": 13688.25,
   "sponsors": [
+    {
+      "id": "sp_16da5e2ae6",
+      "name": "星宇",
+      "amount": 100,
+      "date": "2026-07-11",
+      "message": "感谢大佬开发命语，我很喜欢，谢谢！"
+    },
+    {
+      "id": "sp_f41e3f0dc7",
+      "name": "乌萨奇大王",
+      "amount": 5,
+      "date": "2026-07-09",
+      "message": null
+    },
     {
       "id": "sp_6a84d0d6e3",
       "name": "yakamoz sylvan🌿🌙",
