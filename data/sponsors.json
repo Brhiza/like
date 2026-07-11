@@ -1,9 +1,23 @@
 {
   "version": 1,
-  "updated": "2026-07-11T14:11:55.233Z",
-  "count": 59,
-  "total_amount": 13688.25,
+  "updated": "2026-07-11T16:23:26.577Z",
+  "count": 61,
+  "total_amount": 13711.45,
   "sponsors": [
+    {
+      "id": "sp_40e2a68c0a",
+      "name": "匿名",
+      "amount": 16.6,
+      "date": "2026-07-12",
+      "message": null
+    },
+    {
+      "id": "sp_060e763d71",
+      "name": "匿名",
+      "amount": 6.6,
+      "date": "2026-07-12",
+      "message": null
+    },
     {
       "id": "sp_16da5e2ae6",
       "name": "星宇",
