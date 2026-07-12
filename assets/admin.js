@@ -19,7 +19,7 @@
   // ============ Toast ============
   let toastEl = null;
   let toastTimer = null;
-  function toast(msg, type = 'info', ms = 2200) {
+  function toast(msg, type = 'info', ms = type === 'error' ? 5000 : 3500) {
     if (!toastEl) {
       toastEl = document.createElement('div');
       toastEl.className = 'toast';
@@ -29,6 +29,11 @@
     toastEl.className = `toast toast-${type} is-show`;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('is-show'), ms);
+  }
+
+  function closeDialog(dialog) {
+    if (!dialog?.open) return;
+    dialog.close();
   }
 
   function setBusy(btn, busyText) {
@@ -337,12 +342,12 @@
         throw new Error(j.error || `保存失败 (${res.status})`);
       }
 
-      dlg.close();
+      closeDialog(dlg);
       toast(isEdit ? '记录已更新' : '记录已新增', 'success');
       await loadDonations();
     } catch (e) {
       showFormError('#record-error', e.message);
-      toast(e.message || '保存失败', 'error', 3200);
+      toast(e.message || '保存失败', 'error');
     } finally {
       update();
     }
@@ -482,12 +487,12 @@
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error || `保存失败 (${res.status})`);
       }
-      spDlg.close();
+      closeDialog(spDlg);
       toast(isEdit ? '赞赏已更新' : '赞赏已新增', 'success');
       await loadSponsors();
     } catch (e) {
       showFormError('#sponsor-error', e.message);
-      toast(e.message || '保存失败', 'error', 3200);
+      toast(e.message || '保存失败', 'error');
     } finally {
       update();
     }
@@ -512,7 +517,7 @@
       if (typeof fn === 'function') await fn();
     } finally {
       update();
-      confirmDlg.close();
+      closeDialog(confirmDlg);
     }
   }
 
@@ -530,7 +535,7 @@
         await loadDonations();
       } catch (e) {
         setDonationStatus(`删除失败：${e.message}`);
-        toast(e.message || '删除失败', 'error', 3200);
+        toast(e.message || '删除失败', 'error');
       }
     });
   }
@@ -549,7 +554,7 @@
         await loadSponsors();
       } catch (e) {
         setSponsorStatus(`删除失败：${e.message}`);
-        toast(e.message || '删除失败', 'error', 3200);
+        toast(e.message || '删除失败', 'error');
       }
     });
   }
@@ -934,7 +939,7 @@
 
   function closeBatchDonation() {
     // Actual cleanup happens in the dialog's `close` listener.
-    batchDlg.close();
+    closeDialog(batchDlg);
   }
 
   async function handleBatchFiles(files) {
@@ -1122,12 +1127,12 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `保存失败 (${res.status})`);
 
-      toast(`已新增 ${data.added || records.length} 条记录`, 'success');
       closeBatchDonation();
+      toast(`已新增 ${data.added || records.length} 条记录`, 'success');
       await loadDonations();
     } catch (e) {
       showFormError('#batch-error', e.message);
-      toast(e.message || '保存失败', 'error', 3200);
+      toast(e.message || '保存失败', 'error');
     } finally {
       update();
     }
@@ -1216,6 +1221,11 @@
     showFormError('#sp-batch-error', null);
     renderSpBatchRows();
     spBatchDlg.showModal();
+  }
+
+  function closeBatchSponsor() {
+    // Actual cleanup happens in the dialog's `close` listener.
+    closeDialog(spBatchDlg);
   }
 
   async function handleSpBatchFiles(files) {
@@ -1315,13 +1325,12 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `保存失败 (${res.status})`);
+      closeBatchSponsor();
       toast(`已新增 ${data.added || sponsors.length} 条赞赏`, 'success');
-      spBatchDlg.close();
-      spBatchRows = [];
       await loadSponsors();
     } catch (e) {
       showFormError('#sp-batch-error', e.message);
-      toast(e.message || '保存失败', 'error', 3200);
+      toast(e.message || '保存失败', 'error');
     } finally {
       update();
     }
@@ -1341,7 +1350,7 @@
     $('#btn-new').addEventListener('click', openNewDonation);
     $('#btn-batch').addEventListener('click', openBatchDonation);
     $('#adm-q').addEventListener('input', applyDonationFilter);
-    $('#record-cancel').addEventListener('click', () => dlg.close());
+    $('#record-cancel').addEventListener('click', () => closeDialog(dlg));
     form.elements.image_file.addEventListener('change', () => syncDonationImageUi({ resetAi: true }));
     aiFillBtn.addEventListener('click', recognizeDonationImage);
     form.addEventListener('submit', saveDonation);
@@ -1404,7 +1413,7 @@
     $('#btn-sp-new').addEventListener('click', openNewSponsor);
     $('#btn-sp-batch').addEventListener('click', openBatchSponsor);
     $('#sp-adm-q').addEventListener('input', applySponsorFilter);
-    $('#sponsor-cancel').addEventListener('click', () => spDlg.close());
+    $('#sponsor-cancel').addEventListener('click', () => closeDialog(spDlg));
     spForm.elements.source_image_file.addEventListener('change', () => syncSponsorImageUi({ resetAi: true }));
     sponsorAiFillBtn.addEventListener('click', recognizeSponsorImage);
     spForm.addEventListener('submit', saveSponsor);
@@ -1432,7 +1441,7 @@
       spBatchRows.push(makeSpBatchRow());
       renderSpBatchRows();
     });
-    $('#sp-batch-cancel').addEventListener('click', () => spBatchDlg.close());
+    $('#sp-batch-cancel').addEventListener('click', closeBatchSponsor);
     $('#sp-batch-save').addEventListener('click', saveBatchSponsor);
     spBatchDlg.addEventListener('close', () => { spBatchRows = []; });
     // Re-sort when the user finishes editing a sponsor's date
@@ -1455,7 +1464,7 @@
     });
 
     // Confirm dialog
-    $('#confirm-cancel').addEventListener('click', () => { pendingAction = null; confirmDlg.close(); });
+    $('#confirm-cancel').addEventListener('click', () => { pendingAction = null; closeDialog(confirmDlg); });
     $('#confirm-ok').addEventListener('click', runConfirmed);
   }
 
