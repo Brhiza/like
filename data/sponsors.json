@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-07-16T03:02:31.491Z",
-  "count": 68,
-  "total_amount": 13969.05,
+  "updated": "2026-07-17T10:59:11.265Z",
+  "count": 69,
+  "total_amount": 13972.05,
   "sponsors": [
+    {
+      "id": "sp_7d3406dd5b",
+      "name": "匿名",
+      "amount": 3,
+      "date": "2026-07-17",
+      "message": null
+    },
     {
       "id": "sp_685a8e6b30",
       "name": "Akashi",
