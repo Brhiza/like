@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-07-17T10:59:11.265Z",
-  "count": 69,
-  "total_amount": 13972.05,
+  "updated": "2026-07-24T10:04:23.478Z",
+  "count": 70,
+  "total_amount": 13977.05,
   "sponsors": [
+    {
+      "id": "sp_92d12d4654",
+      "name": "Blue",
+      "amount": 5,
+      "date": "2026-07-24",
+      "message": "支持"
+    },
     {
       "id": "sp_7d3406dd5b",
       "name": "匿名",
