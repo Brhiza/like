@@ -1,9 +1,23 @@
 {
   "version": 1,
-  "updated": "2026-07-24T10:04:23.478Z",
-  "count": 70,
-  "total_amount": 13977.05,
+  "updated": "2026-07-27T23:46:57.122Z",
+  "count": 72,
+  "total_amount": 13980.06,
   "sponsors": [
+    {
+      "id": "sp_225c87756a",
+      "name": "小溪",
+      "amount": 3,
+      "date": "2026-07-28",
+      "message": null
+    },
+    {
+      "id": "sp_28987f4b23",
+      "name": "匿名",
+      "amount": 0.01,
+      "date": "2026-07-26",
+      "message": "求求怎么设置声音"
+    },
     {
       "id": "sp_92d12d4654",
       "name": "Blue",
