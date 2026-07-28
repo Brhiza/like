@@ -1,14 +1,21 @@
 {
   "version": 1,
-  "updated": "2026-07-27T23:46:57.122Z",
-  "count": 72,
-  "total_amount": 13980.06,
+  "updated": "2026-07-28T03:49:14.722Z",
+  "count": 73,
+  "total_amount": 14032.06,
   "sponsors": [
     {
       "id": "sp_225c87756a",
       "name": "小溪",
       "amount": 3,
       "date": "2026-07-28",
+      "message": null
+    },
+    {
+      "id": "sp_5da3883e99",
+      "name": "Camellia",
+      "amount": 52,
+      "date": "2026-07-27",
       "message": null
     },
     {
