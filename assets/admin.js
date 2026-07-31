@@ -1379,6 +1379,7 @@
       batchRows.push(makeBatchRow());
       renderBatchRows();
     });
+    $('#batch-close').addEventListener('click', closeBatchDonation);
     $('#batch-cancel').addEventListener('click', closeBatchDonation);
     $('#batch-save').addEventListener('click', saveBatchDonation);
     batchDlg.addEventListener('close', () => {
@@ -1441,6 +1442,7 @@
       spBatchRows.push(makeSpBatchRow());
       renderSpBatchRows();
     });
+    $('#sp-batch-close').addEventListener('click', closeBatchSponsor);
     $('#sp-batch-cancel').addEventListener('click', closeBatchSponsor);
     $('#sp-batch-save').addEventListener('click', saveBatchSponsor);
     spBatchDlg.addEventListener('close', () => { spBatchRows = []; });
