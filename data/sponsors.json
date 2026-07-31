@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-07-28T03:49:14.722Z",
-  "count": 73,
-  "total_amount": 14032.06,
+  "updated": "2026-07-31T00:52:52.416Z",
+  "count": 74,
+  "total_amount": 14042.06,
   "sponsors": [
+    {
+      "id": "sp_528c7ed746",
+      "name": "云中也恣意^0^",
+      "amount": 10,
+      "date": "2026-07-31",
+      "message": "未工作的学生，一点心意。很喜欢您的软件~~~~"
+    },
     {
       "id": "sp_225c87756a",
       "name": "小溪",
