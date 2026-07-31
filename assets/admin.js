@@ -195,7 +195,7 @@
 
   function renderDonationTable(list) {
     if (!list.length) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--ink-500)">没有匹配的记录</td></tr>`;
+      tbody.innerHTML = `<tr class="table-empty"><td colspan="8">没有匹配的记录</td></tr>`;
       return;
     }
     tbody.innerHTML = list.map(r => {
@@ -205,17 +205,17 @@
         : '<span class="muted small">—</span>';
       return `
       <tr data-id="${escapeHtml(r.id)}">
-        <td>${escapeHtml(r.date)}</td>
-        <td>
+        <td data-label="日期">${escapeHtml(r.date)}</td>
+        <td class="cell-primary" data-label="项目">
           <div style="font-weight:600">${escapeHtml(r.project)}</div>
           <div class="muted small">${escapeHtml(r.name)}${r.effect ? ' · ' + escapeHtml(r.effect) : ''}</div>
         </td>
-        <td>${escapeHtml(r.foundation)}</td>
-        <td>${channelTag}</td>
-        <td>${r.amount != null ? '¥' + fmtAmount(r.amount) : '—'}</td>
-        <td><code class="muted small">${escapeHtml(r.cert_no)}</code></td>
-        <td>${r.image ? `<img class="thumb" src="${escapeHtml(r.image)}" alt="" data-zoom>` : '—'}</td>
-        <td class="col-action">
+        <td data-label="基金会">${escapeHtml(r.foundation)}</td>
+        <td data-label="渠道">${channelTag}</td>
+        <td data-label="金额">${r.amount != null ? '¥' + fmtAmount(r.amount) : '—'}</td>
+        <td data-label="证书号"><code class="muted small">${escapeHtml(r.cert_no)}</code></td>
+        <td data-label="图片">${r.image ? `<img class="thumb" src="${escapeHtml(r.image)}" alt="" data-zoom>` : '—'}</td>
+        <td class="col-action" data-label="操作">
           <div class="row-actions">
             <button class="btn btn-secondary" data-act="edit">编辑</button>
             <button class="btn btn-danger" data-act="del">删除</button>
@@ -226,7 +226,7 @@
     }).join('');
   }
 
-  // Donation dialog
+  // Donation edit dialog
   const dlg = $('#record-dialog');
   const form = $('#record-form');
   const aiFillBtn = $('#btn-ai-fill');
@@ -253,20 +253,6 @@
       : '请选择证书图片，将自动压缩并按日期命名上传';
     if (aiFillBtn) aiFillBtn.disabled = true;
     if (resetAi) setStatusText(aiHintEl, '选择证书图片后，可用 AI 自动提取字段');
-  }
-
-  function openNewDonation() {
-    editingId = null;
-    $('#record-dialog-title').textContent = '新增记录';
-    form.reset();
-    form.elements.name.value = '李柯';
-    form.elements.date.value = new Date().toISOString().slice(0, 10);
-    form.elements.id.value = '';
-    form.elements.image.value = '';
-    form.elements.channel.value = 'xwgc';
-    syncDonationImageUi({ resetAi: true });
-    showFormError('#record-error', null);
-    dlg.showModal();
   }
 
   function openEditDonation(rec) {
@@ -398,16 +384,16 @@
 
   function renderSponsorTable(list) {
     if (!list.length) {
-      spTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--ink-500)">没有匹配的赞赏</td></tr>`;
+      spTbody.innerHTML = `<tr class="table-empty"><td colspan="5">没有匹配的赞赏</td></tr>`;
       return;
     }
     spTbody.innerHTML = list.map(r => `
       <tr data-id="${escapeHtml(r.id)}">
-        <td>${escapeHtml(r.date)}</td>
-        <td style="font-weight:600">${escapeHtml(r.name)}</td>
-        <td>¥${fmtAmount(r.amount)}</td>
-        <td class="muted small" style="max-width:280px">${escapeHtml(r.message || '')}</td>
-        <td class="col-action">
+        <td data-label="日期">${escapeHtml(r.date)}</td>
+        <td class="cell-primary" data-label="姓名" style="font-weight:600">${escapeHtml(r.name)}</td>
+        <td data-label="金额">¥${fmtAmount(r.amount)}</td>
+        <td data-label="留言" class="muted small" style="max-width:280px">${escapeHtml(r.message || '')}</td>
+        <td class="col-action" data-label="操作">
           <div class="row-actions">
             <button class="btn btn-secondary" data-act="edit">编辑</button>
             <button class="btn btn-danger" data-act="del">删除</button>
@@ -417,7 +403,7 @@
     `).join('');
   }
 
-  // Sponsor dialog
+  // Sponsor edit dialog
   const spDlg = $('#sponsor-dialog');
   const spForm = $('#sponsor-form');
   const sponsorAiFillBtn = $('#btn-sp-ai-fill');
@@ -433,17 +419,6 @@
         file ? '已选择赞赏截图，可用 AI 自动提取字段' : '选择赞赏截图后，可用 AI 自动提取字段',
       );
     }
-  }
-
-  function openNewSponsor() {
-    editingSponsorId = null;
-    $('#sponsor-dialog-title').textContent = '新增赞赏';
-    spForm.reset();
-    spForm.elements.date.value = new Date().toISOString().slice(0, 10);
-    spForm.elements.id.value = '';
-    syncSponsorImageUi({ resetAi: true });
-    showFormError('#sponsor-error', null);
-    spDlg.showModal();
   }
 
   function openEditSponsor(rec) {
@@ -825,6 +800,7 @@
   // rows: { id, file?, previewUrl?, status, statusType, fields, uploaded? }
   let batchRows = [];
   let batchRowSeq = 0;
+  let batchGeneration = 0;
 
   const BATCH_MAX = 50;
 
@@ -836,6 +812,7 @@
       status: file ? '等待识别' : '待填写',
       statusType: '', // '', 'busy', 'ok', 'error'
       uploaded: '', // already-uploaded image path (after save attempt)
+      dirtyFields: new Set(),
       fields: {
         name: '李柯',
         project: '',
@@ -851,34 +828,34 @@
 
   function renderBatchRows() {
     if (!batchRows.length) {
-      batchTbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--ink-500)">还没有待提交的记录,请上传图片或添加空白行</td></tr>`;
+      batchTbody.innerHTML = `<tr class="batch-empty"><td colspan="11">选择证书图片，或手动添加一条记录</td></tr>`;
       return;
     }
-    batchTbody.innerHTML = batchRows.map((row) => {
+    batchTbody.innerHTML = batchRows.map((row, index) => {
       const f = row.fields;
       const statusClass = row.statusType ? `is-${row.statusType}` : '';
       const thumb = row.previewUrl
         ? `<img src="${escapeHtml(row.previewUrl)}" alt="">`
         : '<span>无图</span>';
       return `
-      <tr data-row="${row.id}">
-        <td><div class="thumb-cell">${thumb}</div></td>
-        <td><input name="name" value="${escapeHtml(f.name)}"></td>
-        <td><input name="project" value="${escapeHtml(f.project)}"></td>
-        <td>
+      <tr data-row="${row.id}" data-index="${index + 1}">
+        <td data-label="图片"><div class="thumb-cell">${thumb}</div></td>
+        <td data-label="捐赠人"><input name="name" value="${escapeHtml(f.name)}"></td>
+        <td data-label="项目"><input name="project" value="${escapeHtml(f.project)}"></td>
+        <td data-label="渠道">
           <select name="channel">
             <option value="txgy"${f.channel === 'txgy' ? ' selected' : ''}>腾讯公益</option>
             <option value="xwgc"${f.channel === 'xwgc' ? ' selected' : ''}>希望工程</option>
             <option value="other"${f.channel === 'other' ? ' selected' : ''}>其他</option>
           </select>
         </td>
-        <td><input name="foundation" value="${escapeHtml(f.foundation)}" list="foundation-list"></td>
-        <td><input name="amount" type="number" step="0.01" min="0" value="${escapeHtml(f.amount)}"></td>
-        <td><input name="date" type="date" value="${escapeHtml(f.date)}"></td>
-        <td><input name="effect" value="${escapeHtml(f.effect)}"></td>
-        <td><input name="cert_no" value="${escapeHtml(f.cert_no)}"></td>
-        <td><span class="row-status ${statusClass}">${escapeHtml(row.status || '')}</span></td>
-        <td><button type="button" class="btn-row-del" data-act="del-row" title="删除该行">×</button></td>
+        <td data-label="基金会"><input name="foundation" value="${escapeHtml(f.foundation)}" list="foundation-list"></td>
+        <td data-label="金额"><input name="amount" type="number" step="0.01" min="0" value="${escapeHtml(f.amount)}"></td>
+        <td data-label="日期"><input name="date" type="date" value="${escapeHtml(f.date)}"></td>
+        <td data-label="助力效应"><input name="effect" value="${escapeHtml(f.effect)}"></td>
+        <td data-label="证书编号"><input name="cert_no" value="${escapeHtml(f.cert_no)}"></td>
+        <td data-label="状态"><span class="row-status ${statusClass}">${escapeHtml(row.status || '')}</span></td>
+        <td class="batch-row-action"><button type="button" class="btn-row-del" data-act="del-row" aria-label="删除第 ${index + 1} 条记录">删除</button></td>
       </tr>`;
     }).join('');
   }
@@ -893,6 +870,23 @@
       span.textContent = status;
       span.className = `row-status ${statusType ? 'is-' + statusType : ''}`;
     }
+  }
+
+  function updateBatchRowFields(rowId) {
+    const row = batchRows.find(r => r.id === rowId);
+    const tr = batchTbody.querySelector(`tr[data-row="${rowId}"]`);
+    if (!row || !tr) return;
+    for (const el of tr.querySelectorAll('input,select')) {
+      if (row.fields[el.name] !== undefined) el.value = row.fields[el.name];
+    }
+  }
+
+  function focusBatchField(tbodyEl, rowId, selector) {
+    requestAnimationFrame(() => {
+      const tr = tbodyEl.querySelector(`tr[data-row="${rowId}"]`);
+      tr?.scrollIntoView({ block: 'nearest' });
+      tr?.querySelector(selector)?.focus();
+    });
   }
 
   function readBatchRowFromDom(rowId) {
@@ -928,9 +922,10 @@
   }
 
   function openBatchDonation() {
+    batchGeneration++;
     batchRows = [];
     batchRowSeq = 0;
-    setStatusText(batchHintEl, '可选择多张图片让 AI 自动识别,或先点 + 添加空白行手工填写');
+    setStatusText(batchHintEl, '可选择一张或多张图片，也可以手动添加记录。');
     showFormError('#batch-error', null);
     populateFoundationList();
     renderBatchRows();
@@ -944,10 +939,11 @@
 
   async function handleBatchFiles(files) {
     if (!files || !files.length) return;
+    const generation = batchGeneration;
     syncAllBatchRowsFromDom();
     const remaining = BATCH_MAX - batchRows.length;
     if (remaining <= 0) {
-      setStatusText(batchHintEl, `单次最多 ${BATCH_MAX} 行,已达上限`, true);
+      setStatusText(batchHintEl, `单次最多 ${BATCH_MAX} 条，已达上限。`, true);
       return;
     }
     const picked = [...files].slice(0, remaining);
@@ -955,37 +951,40 @@
     const newRows = picked.map(file => makeBatchRow({ file }));
     batchRows.push(...newRows);
     renderBatchRows();
-    setStatusText(batchHintEl, `已添加 ${picked.length} 张图片,正在并发调用 AI 识别…${skipped ? `(已跳过 ${skipped} 张超出上限)` : ''}`);
+    setStatusText(batchHintEl, `已添加 ${picked.length} 张图片，正在识别…${skipped ? `（已跳过 ${skipped} 张超出上限的图片）` : ''}`);
 
     // Concurrency-limited AI recognition (3 at a time)
     let pointer = 0;
     let okCount = 0;
     let errCount = 0;
     const worker = async () => {
-      while (pointer < newRows.length) {
+      while (pointer < newRows.length && generation === batchGeneration) {
         const row = newRows[pointer++];
         updateBatchRowStatus(row.id, 'AI 识别中…', 'busy');
         try {
           const extracted = await aiExtractFile('donation', row.file);
+          if (generation !== batchGeneration) return;
           const applied = applyExtractedToRow(row, extracted);
+          updateBatchRowFields(row.id);
           if (applied.length) {
-            updateBatchRowStatus(row.id, `已回填:${applied.join('、')}`, 'ok');
+            updateBatchRowStatus(row.id, `已识别：${applied.join('、')}`, 'ok');
           } else {
-            updateBatchRowStatus(row.id, '未识别到字段,请手动填写', 'error');
+            updateBatchRowStatus(row.id, '未识别到内容，请手动填写', 'error');
           }
-          // Re-render row to reflect new values
-          renderBatchRows();
           okCount++;
         } catch (e) {
-          updateBatchRowStatus(row.id, `识别失败:${e.message || '未知错误'}`, 'error');
+          if (generation !== batchGeneration) return;
+          updateBatchRowStatus(row.id, `识别失败：${e.message || '未知错误'}`, 'error');
           errCount++;
         }
       }
     };
     await Promise.all([worker(), worker(), worker()]);
+    if (generation !== batchGeneration) return;
+    syncAllBatchRowsFromDom();
     sortBatchRowsByDate();
     renderBatchRows();
-    setStatusText(batchHintEl, `AI 识别完成:成功 ${okCount} 张,失败 ${errCount} 张,已按日期排序。请核对后点「保存全部」。`);
+    setStatusText(batchHintEl, `识别完成：成功 ${okCount} 张，失败 ${errCount} 张。请核对后保存。`, errCount > 0);
   }
 
   function applyExtractedToRow(row, extracted) {
@@ -996,17 +995,17 @@
     };
     for (const [k, label] of Object.entries(m)) {
       const v = String(extracted?.[k] ?? '').trim();
-      if (v) { row.fields[k] = v; applied.push(label); }
+      if (v && !row.dirtyFields.has(k)) { row.fields[k] = v; applied.push(label); }
     }
-    if (extracted?.amount != null && Number.isFinite(Number(extracted.amount))) {
+    if (!row.dirtyFields.has('amount') && extracted?.amount != null && Number.isFinite(Number(extracted.amount))) {
       row.fields.amount = String(extracted.amount);
       applied.push('金额');
     }
-    if (typeof extracted?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(extracted.date)) {
+    if (!row.dirtyFields.has('date') && typeof extracted?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(extracted.date)) {
       row.fields.date = extracted.date;
       applied.push('日期');
     }
-    if (extracted?.channel && CHANNEL_LABELS[extracted.channel]) {
+    if (!row.dirtyFields.has('channel') && extracted?.channel && CHANNEL_LABELS[extracted.channel]) {
       row.fields.channel = extracted.channel;
       applied.push('渠道');
     }
@@ -1144,12 +1143,14 @@
   const spBatchHintEl = $('#sp-batch-hint');
   let spBatchRows = [];
   let spBatchRowSeq = 0;
+  let spBatchGeneration = 0;
 
   function makeSpBatchRow() {
     return {
       id: ++spBatchRowSeq,
       status: '待填写',
       statusType: '',
+      dirtyFields: new Set(),
       fields: {
         name: '',
         amount: '',
@@ -1161,20 +1162,20 @@
 
   function renderSpBatchRows() {
     if (!spBatchRows.length) {
-      spBatchTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--ink-500)">还没有待提交的赞赏,请上传截图或添加空白行</td></tr>`;
+      spBatchTbody.innerHTML = `<tr class="batch-empty"><td colspan="6">选择赞赏截图，或手动添加一条赞赏</td></tr>`;
       return;
     }
-    spBatchTbody.innerHTML = spBatchRows.map((row) => {
+    spBatchTbody.innerHTML = spBatchRows.map((row, index) => {
       const f = row.fields;
       const statusClass = row.statusType ? `is-${row.statusType}` : '';
       return `
-      <tr data-row="${row.id}">
-        <td><input name="name" value="${escapeHtml(f.name)}" placeholder="留空=匿名"></td>
-        <td><input name="amount" type="number" step="0.01" min="0" value="${escapeHtml(f.amount)}"></td>
-        <td><input name="date" type="date" value="${escapeHtml(f.date)}"></td>
-        <td><input name="message" value="${escapeHtml(f.message)}"></td>
-        <td><span class="row-status ${statusClass}">${escapeHtml(row.status || '')}</span></td>
-        <td><button type="button" class="btn-row-del" data-act="del-row" title="删除该行">×</button></td>
+      <tr data-row="${row.id}" data-index="${index + 1}">
+        <td data-label="姓名 / 昵称"><input name="name" value="${escapeHtml(f.name)}" placeholder="留空则为匿名"></td>
+        <td data-label="金额"><input name="amount" type="number" step="0.01" min="0" value="${escapeHtml(f.amount)}"></td>
+        <td data-label="日期"><input name="date" type="date" value="${escapeHtml(f.date)}"></td>
+        <td data-label="留言"><input name="message" value="${escapeHtml(f.message)}"></td>
+        <td data-label="状态"><span class="row-status ${statusClass}">${escapeHtml(row.status || '')}</span></td>
+        <td class="batch-row-action"><button type="button" class="btn-row-del" data-act="del-row" aria-label="删除第 ${index + 1} 条赞赏">删除</button></td>
       </tr>`;
     }).join('');
   }
@@ -1188,6 +1189,15 @@
     if (span) {
       span.textContent = status;
       span.className = `row-status ${statusType ? 'is-' + statusType : ''}`;
+    }
+  }
+
+  function updateSpBatchRowFields(rowId) {
+    const row = spBatchRows.find(r => r.id === rowId);
+    const tr = spBatchTbody.querySelector(`tr[data-row="${rowId}"]`);
+    if (!row || !tr) return;
+    for (const el of tr.querySelectorAll('input')) {
+      if (row.fields[el.name] !== undefined) el.value = row.fields[el.name];
     }
   }
 
@@ -1215,9 +1225,10 @@
   }
 
   function openBatchSponsor() {
+    spBatchGeneration++;
     spBatchRows = [];
     spBatchRowSeq = 0;
-    setStatusText(spBatchHintEl, '可选择多张截图让 AI 自动识别,或先点 + 添加空白行手工填写');
+    setStatusText(spBatchHintEl, '可选择一张或多张截图，也可以手动添加赞赏。');
     showFormError('#sp-batch-error', null);
     renderSpBatchRows();
     spBatchDlg.showModal();
@@ -1230,10 +1241,11 @@
 
   async function handleSpBatchFiles(files) {
     if (!files || !files.length) return;
+    const generation = spBatchGeneration;
     syncAllSpBatchRowsFromDom();
     const remaining = BATCH_MAX - spBatchRows.length;
     if (remaining <= 0) {
-      setStatusText(spBatchHintEl, `单次最多 ${BATCH_MAX} 行,已达上限`, true);
+      setStatusText(spBatchHintEl, `单次最多 ${BATCH_MAX} 条，已达上限。`, true);
       return;
     }
     const picked = [...files].slice(0, remaining);
@@ -1241,51 +1253,55 @@
     const newRows = picked.map(() => makeSpBatchRow());
     spBatchRows.push(...newRows);
     renderSpBatchRows();
-    setStatusText(spBatchHintEl, `已添加 ${picked.length} 行,正在并发调用 AI 识别…${skipped ? `(已跳过 ${skipped} 张超出上限)` : ''}`);
+    setStatusText(spBatchHintEl, `已添加 ${picked.length} 张截图，正在识别…${skipped ? `（已跳过 ${skipped} 张超出上限的截图）` : ''}`);
 
     let pointer = 0;
     let okCount = 0;
     let errCount = 0;
     const worker = async () => {
-      while (pointer < newRows.length) {
+      while (pointer < newRows.length && generation === spBatchGeneration) {
         const i = pointer++;
         const row = newRows[i];
         const file = picked[i];
         updateSpBatchRowStatus(row.id, 'AI 识别中…', 'busy');
         try {
           const extracted = await aiExtractFile('sponsor', file);
+          if (generation !== spBatchGeneration) return;
           const applied = [];
           const v = (k, label) => {
             const val = String(extracted?.[k] ?? '').trim();
-            if (val) { row.fields[k] = val; applied.push(label); }
+            if (val && !row.dirtyFields.has(k)) { row.fields[k] = val; applied.push(label); }
           };
           v('name', '姓名');
-          if (extracted?.amount != null && Number.isFinite(Number(extracted.amount))) {
+          if (!row.dirtyFields.has('amount') && extracted?.amount != null && Number.isFinite(Number(extracted.amount))) {
             row.fields.amount = String(extracted.amount);
             applied.push('金额');
           }
-          if (typeof extracted?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(extracted.date)) {
+          if (!row.dirtyFields.has('date') && typeof extracted?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(extracted.date)) {
             row.fields.date = extracted.date;
             applied.push('日期');
           }
           v('message', '留言');
+          updateSpBatchRowFields(row.id);
           if (applied.length) {
-            updateSpBatchRowStatus(row.id, `已回填:${applied.join('、')}`, 'ok');
+            updateSpBatchRowStatus(row.id, `已识别：${applied.join('、')}`, 'ok');
           } else {
-            updateSpBatchRowStatus(row.id, '未识别到字段,请手动填写', 'error');
+            updateSpBatchRowStatus(row.id, '未识别到内容，请手动填写', 'error');
           }
-          renderSpBatchRows();
           okCount++;
         } catch (e) {
-          updateSpBatchRowStatus(row.id, `识别失败:${e.message || '未知错误'}`, 'error');
+          if (generation !== spBatchGeneration) return;
+          updateSpBatchRowStatus(row.id, `识别失败：${e.message || '未知错误'}`, 'error');
           errCount++;
         }
       }
     };
     await Promise.all([worker(), worker(), worker()]);
+    if (generation !== spBatchGeneration) return;
+    syncAllSpBatchRowsFromDom();
     sortSpBatchRowsByDate();
     renderSpBatchRows();
-    setStatusText(spBatchHintEl, `AI 识别完成:成功 ${okCount} 张,失败 ${errCount} 张,已按日期排序。请核对后点「保存全部」。`);
+    setStatusText(spBatchHintEl, `识别完成：成功 ${okCount} 张，失败 ${errCount} 张。请核对后保存。`, errCount > 0);
   }
 
   async function saveBatchSponsor() {
@@ -1347,8 +1363,7 @@
     }
 
     // Donations
-    $('#btn-new').addEventListener('click', openNewDonation);
-    $('#btn-batch').addEventListener('click', openBatchDonation);
+    $('#btn-new').addEventListener('click', openBatchDonation);
     $('#adm-q').addEventListener('input', applyDonationFilter);
     $('#record-cancel').addEventListener('click', () => closeDialog(dlg));
     form.elements.image_file.addEventListener('change', () => syncDonationImageUi({ resetAi: true }));
@@ -1373,16 +1388,20 @@
     $('#batch-add-row').addEventListener('click', () => {
       syncAllBatchRowsFromDom();
       if (batchRows.length >= BATCH_MAX) {
-        setStatusText(batchHintEl, `单次最多 ${BATCH_MAX} 行,已达上限`, true);
+        setStatusText(batchHintEl, `单次最多 ${BATCH_MAX} 条，已达上限。`, true);
         return;
       }
-      batchRows.push(makeBatchRow());
+      const row = makeBatchRow();
+      batchRows.push(row);
       renderBatchRows();
+      setStatusText(batchHintEl, '已添加一条空白记录，请填写后保存。');
+      focusBatchField(batchTbody, row.id, 'input[name="project"]');
     });
     $('#batch-close').addEventListener('click', closeBatchDonation);
     $('#batch-cancel').addEventListener('click', closeBatchDonation);
     $('#batch-save').addEventListener('click', saveBatchDonation);
     batchDlg.addEventListener('close', () => {
+      batchGeneration++;
       // Free preview URLs if dialog closed via Esc / backdrop
       for (const row of batchRows) {
         if (row.previewUrl) try { URL.revokeObjectURL(row.previewUrl); } catch {}
@@ -1396,6 +1415,13 @@
         sortBatchRowsByDate();
         renderBatchRows();
       }
+    });
+    batchTbody.addEventListener('input', (e) => {
+      const tr = e.target.closest('tr[data-row]');
+      const row = tr ? batchRows.find(r => r.id === Number(tr.dataset.row)) : null;
+      if (!row || !e.target.name || row.fields[e.target.name] === undefined) return;
+      row.fields[e.target.name] = e.target.value;
+      row.dirtyFields.add(e.target.name);
     });
     batchTbody.addEventListener('click', (e) => {
       if (e.target.closest('[data-act="del-row"]')) {
@@ -1411,8 +1437,7 @@
     });
 
     // Sponsors
-    $('#btn-sp-new').addEventListener('click', openNewSponsor);
-    $('#btn-sp-batch').addEventListener('click', openBatchSponsor);
+    $('#btn-sp-new').addEventListener('click', openBatchSponsor);
     $('#sp-adm-q').addEventListener('input', applySponsorFilter);
     $('#sponsor-cancel').addEventListener('click', () => closeDialog(spDlg));
     spForm.elements.source_image_file.addEventListener('change', () => syncSponsorImageUi({ resetAi: true }));
@@ -1436,16 +1461,22 @@
     $('#sp-batch-add-row').addEventListener('click', () => {
       syncAllSpBatchRowsFromDom();
       if (spBatchRows.length >= BATCH_MAX) {
-        setStatusText(spBatchHintEl, `单次最多 ${BATCH_MAX} 行,已达上限`, true);
+        setStatusText(spBatchHintEl, `单次最多 ${BATCH_MAX} 条，已达上限。`, true);
         return;
       }
-      spBatchRows.push(makeSpBatchRow());
+      const row = makeSpBatchRow();
+      spBatchRows.push(row);
       renderSpBatchRows();
+      setStatusText(spBatchHintEl, '已添加一条空白赞赏，请填写后保存。');
+      focusBatchField(spBatchTbody, row.id, 'input[name="name"]');
     });
     $('#sp-batch-close').addEventListener('click', closeBatchSponsor);
     $('#sp-batch-cancel').addEventListener('click', closeBatchSponsor);
     $('#sp-batch-save').addEventListener('click', saveBatchSponsor);
-    spBatchDlg.addEventListener('close', () => { spBatchRows = []; });
+    spBatchDlg.addEventListener('close', () => {
+      spBatchGeneration++;
+      spBatchRows = [];
+    });
     // Re-sort when the user finishes editing a sponsor's date
     spBatchTbody.addEventListener('change', (e) => {
       if (e.target.matches('input[name="date"]')) {
@@ -1453,6 +1484,13 @@
         sortSpBatchRowsByDate();
         renderSpBatchRows();
       }
+    });
+    spBatchTbody.addEventListener('input', (e) => {
+      const tr = e.target.closest('tr[data-row]');
+      const row = tr ? spBatchRows.find(r => r.id === Number(tr.dataset.row)) : null;
+      if (!row || !e.target.name || row.fields[e.target.name] === undefined) return;
+      row.fields[e.target.name] = e.target.value;
+      row.dirtyFields.add(e.target.name);
     });
     spBatchTbody.addEventListener('click', (e) => {
       if (e.target.closest('[data-act="del-row"]')) {

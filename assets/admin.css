@@ -11,6 +11,14 @@
   text-align: center;
   white-space: nowrap;
 }
+.admin-body button:focus-visible,
+.admin-body a:focus-visible,
+.admin-body input:focus-visible,
+.admin-body select:focus-visible,
+.admin-body textarea:focus-visible {
+  outline: 2px solid var(--warm-400);
+  outline-offset: 2px;
+}
 
 /* ====== Login ====== */
 .auth-view {
@@ -128,6 +136,7 @@
 }
 .admin-toolbar input {
   flex: 1;
+  min-height: 44px;
   padding: 10px 14px;
   border-radius: 12px;
   border: 1px solid var(--line);
@@ -168,6 +177,11 @@
 }
 .admin-table tbody tr:last-child td { border-bottom: none; }
 .admin-table tbody tr:hover { background: var(--warm-50); }
+.admin-table .table-empty td {
+  padding: 30px;
+  color: var(--ink-500);
+  text-align: center;
+}
 .admin-table img.thumb {
   width: 44px;
   height: 44px;
@@ -345,6 +359,11 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   vertical-align: middle;
 }
 .batch-table tbody tr:last-child td { border-bottom: none; }
+.batch-table .batch-empty td {
+  padding: 30px;
+  color: var(--ink-500);
+  text-align: center;
+}
 .batch-table input,
 .batch-table select {
   width: 100%;
@@ -395,9 +414,11 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   border: none;
   color: #c33b1f;
   cursor: pointer;
-  font-size: 18px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
   line-height: 1;
-  min-width: 36px;
+  min-width: 44px;
   min-height: 36px;
   padding: 4px 6px;
 }
@@ -413,12 +434,74 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   }
   .batch-toolbar {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .batch-toolbar .btn { width: 100%; min-height: 44px; }
-  .batch-toolbar .status-text { min-width: 0; }
-  .batch-table-wrap { min-height: 160px; }
-  .batch-table { min-width: 900px; }
+  .batch-toolbar .status-text { grid-column: 1 / -1; min-width: 0; }
+  .batch-table-wrap {
+    min-height: 160px;
+    border: none;
+    background: transparent;
+  }
+  .batch-table { display: block; min-width: 0; }
+  .batch-table thead { display: none; }
+  .batch-table tbody {
+    display: grid;
+    gap: 12px;
+  }
+  .batch-table tbody tr[data-row] {
+    display: grid;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 5px 16px rgba(70, 35, 10, .06);
+  }
+  .batch-table tbody tr[data-row]::before {
+    content: '记录 ' attr(data-index);
+    margin-bottom: 6px;
+    color: var(--warm-700);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .sponsor-batch-table tbody tr[data-row]::before { content: '赞赏 ' attr(data-index); }
+  .batch-table tbody td {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border: none;
+  }
+  .batch-table tbody td::before {
+    content: attr(data-label);
+    color: var(--ink-500);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .batch-table input,
+  .batch-table select {
+    min-width: 0 !important;
+    min-height: 42px;
+    font-size: 14px;
+  }
+  .batch-table .thumb-cell { width: 64px; height: 64px; }
+  .batch-table .batch-row-action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+  .batch-table .batch-row-action::before { display: none; }
+  .batch-table .btn-row-del {
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(195, 59, 31, .08);
+  }
+  .batch-table .batch-empty { display: block; }
+  .batch-table .batch-empty td { display: block; padding: 28px 16px; }
 }
 
 /* ====== Busy button + spinner ====== */
@@ -476,11 +559,52 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   .admin-stats .stat:nth-child(3) { grid-column: 1 / -1; }
   .admin-toolbar {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
   }
-  .admin-toolbar input { grid-column: 1 / -1; width: 100%; box-sizing: border-box; }
+  .admin-toolbar input { width: 100%; box-sizing: border-box; }
   .admin-toolbar .btn { width: 100%; min-height: 44px; padding-inline: 12px; }
+  .admin-table-wrap {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+  .admin-table { display: block; min-width: 0; }
+  .admin-table thead { display: none; }
+  .admin-table tbody {
+    display: grid;
+    gap: 10px;
+  }
+  .admin-table tbody tr[data-id] {
+    display: grid;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--shadow);
+  }
+  .admin-table tbody tr[data-id]:hover { background: #fff; }
+  .admin-table tbody td {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border: none;
+    overflow-wrap: anywhere;
+  }
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    color: var(--ink-500);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .admin-table .cell-primary { order: -1; }
+  .admin-table .col-action { width: auto; }
+  .admin-table .row-actions { width: 100%; }
+  .admin-table .row-actions .btn { flex: 1; min-height: 40px; }
+  .admin-table .table-empty { display: block; }
+  .admin-table .table-empty td { display: block; padding: 28px 16px; }
   .record-dialog form { padding: 18px; }
   .row-2 { grid-template-columns: 1fr; }
   .field-actions .btn { width: 100%; min-height: 44px; }
@@ -510,4 +634,7 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
     color: var(--ink-900);
   }
   .batch-table .thumb-cell { background: rgba(255,255,255,.04); }
+  .batch-table tbody tr[data-row],
+  .admin-table tbody tr[data-id] { background: var(--card); }
+  .admin-table tbody tr[data-id]:hover { background: var(--card); }
 }
