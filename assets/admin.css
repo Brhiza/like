@@ -6,6 +6,11 @@
 .muted { color: var(--ink-500); }
 .small { font-size: 13px; }
 .error { color: #c33b1f; font-size: 14px; margin: 8px 0 0; }
+.admin-body .btn {
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+}
 
 /* ====== Login ====== */
 .auth-view {
@@ -70,7 +75,7 @@
 .admin-actions {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .admin-tabs {
@@ -93,6 +98,7 @@
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
   font-family: inherit;
+  white-space: nowrap;
 }
 .admin-tab:hover { color: var(--warm-600); }
 .admin-tab.is-active {
@@ -171,7 +177,7 @@
   cursor: zoom-in;
 }
 .col-action { width: 140px; white-space: nowrap; }
-.row-actions { display: flex; gap: 6px; }
+.row-actions { display: flex; gap: 6px; flex-wrap: nowrap; }
 .row-actions .btn { padding: 6px 12px; font-size: 13px; }
 
 /* ====== Dialogs ====== */
@@ -183,7 +189,12 @@ dialog {
   background: #fff;
   max-width: 520px;
   width: 92vw;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
 }
+dialog:not([open]) { display: none; }
 dialog::backdrop { background: rgba(20,8,0,.55); }
 
 .record-dialog form {
@@ -246,6 +257,7 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   justify-content: flex-end;
   gap: 8px;
   margin-top: 6px;
+  flex-shrink: 0;
 }
 
 .confirm-dialog {
@@ -258,17 +270,43 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   max-width: 1200px;
   width: 96vw;
   max-height: 92vh;
+  max-height: 92dvh;
   padding: 22px 24px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow: hidden;
+}
+.batch-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 12px;
 }
 .batch-head h2 {
   margin: 0 0 4px;
   color: var(--warm-700);
   font-size: 20px;
 }
-.batch-head p { margin: 0; }
+.batch-head p { grid-column: 1 / -1; margin: 0; }
+.dialog-close {
+  appearance: none;
+  width: 36px;
+  height: 36px;
+  margin: -7px -7px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-500);
+  font-family: inherit;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.dialog-close:hover { background: var(--warm-50); color: var(--warm-700); }
+.dialog-close:focus-visible { outline: 2px solid var(--warm-400); outline-offset: 2px; }
 .batch-toolbar {
   display: flex;
   align-items: center;
@@ -359,12 +397,27 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
   cursor: pointer;
   font-size: 18px;
   line-height: 1;
+  min-width: 36px;
+  min-height: 36px;
   padding: 4px 6px;
 }
 .batch-table .btn-row-del:hover { color: #a02c12; }
 
 @media (max-width: 720px) {
-  .batch-dialog { padding: 16px; }
+  .batch-dialog {
+    width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+    padding: 14px;
+    gap: 12px;
+  }
+  .batch-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .batch-toolbar .btn { width: 100%; min-height: 44px; }
+  .batch-toolbar .status-text { min-width: 0; }
+  .batch-table-wrap { min-height: 160px; }
   .batch-table { min-width: 900px; }
 }
 
@@ -413,11 +466,27 @@ dialog::backdrop { background: rgba(20,8,0,.55); }
 .toast.toast-error   { background: #c33b1f; }
 
 @media (max-width: 720px) {
-  .admin-header-inner { flex-direction: column; align-items: stretch; gap: 8px; }
-  .admin-actions { justify-content: space-between; }
+  .admin-header-inner { padding: 10px 14px; gap: 8px; }
+  .admin-actions { margin-left: auto; }
+  .admin-actions .btn { min-height: 40px; padding: 8px 12px; }
+  .admin-tabs { padding: 0 14px; }
+  .admin-tab { flex: 1; padding: 11px 12px; }
+  .admin-main { padding: 14px; }
   .admin-stats { grid-template-columns: 1fr 1fr; }
   .admin-stats .stat:nth-child(3) { grid-column: 1 / -1; }
+  .admin-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .admin-toolbar input { grid-column: 1 / -1; width: 100%; box-sizing: border-box; }
+  .admin-toolbar .btn { width: 100%; min-height: 44px; padding-inline: 12px; }
+  .record-dialog form { padding: 18px; }
   .row-2 { grid-template-columns: 1fr; }
+  .field-actions .btn { width: 100%; min-height: 44px; }
+  .dialog-actions .btn { flex: 1; min-height: 44px; }
+  .confirm-dialog .dialog-actions .btn { min-width: 0; }
+  .toast { bottom: 16px; }
 }
 
 /* ===== Dark mode (auto) ===== */
