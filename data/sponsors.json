@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-07-31T12:57:02.237Z",
-  "count": 76,
-  "total_amount": 14063.06,
+  "updated": "2026-08-02T06:58:52.812Z",
+  "count": 77,
+  "total_amount": 14083.06,
   "sponsors": [
+    {
+      "id": "sp_369d401c66",
+      "name": "未央",
+      "amount": 20,
+      "date": "2026-08-02",
+      "message": null
+    },
     {
       "id": "sp_3e297ed0d5",
       "name": "匿名",
