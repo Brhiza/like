@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-02T06:58:52.812Z",
-  "count": 77,
-  "total_amount": 14083.06,
+  "updated": "2026-08-05T02:03:13.692Z",
+  "count": 78,
+  "total_amount": 14084.06,
   "sponsors": [
+    {
+      "id": "sp_06e92bc893",
+      "name": "匿名",
+      "amount": 1,
+      "date": "2026-08-05",
+      "message": "老大你太牛逼了这简直是史诗级更新Σ(ﾟдﾟ;)"
+    },
     {
       "id": "sp_369d401c66",
       "name": "未央",
