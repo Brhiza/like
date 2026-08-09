@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-06T07:59:18.241Z",
-  "count": 79,
-  "total_amount": 14086.06,
+  "updated": "2026-08-09T16:12:31.163Z",
+  "count": 80,
+  "total_amount": 14106.06,
   "sponsors": [
+    {
+      "id": "sp_6694cd0968",
+      "name": "momo",
+      "amount": 20,
+      "date": "2026-08-10",
+      "message": null
+    },
     {
       "id": "sp_2b2b7a648e",
       "name": "starryaw",
