@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-09T16:12:31.163Z",
-  "count": 80,
-  "total_amount": 14106.06,
+  "updated": "2026-08-12T17:47:17.017Z",
+  "count": 81,
+  "total_amount": 14206.06,
   "sponsors": [
+    {
+      "id": "sp_75fbf6d2c6",
+      "name": "doubleggirl",
+      "amount": 100,
+      "date": "2026-08-13",
+      "message": null
+    },
     {
       "id": "sp_6694cd0968",
       "name": "momo",
