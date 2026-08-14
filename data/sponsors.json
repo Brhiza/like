@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-12T17:47:17.017Z",
-  "count": 81,
-  "total_amount": 14206.06,
+  "updated": "2026-08-14T03:11:46.356Z",
+  "count": 82,
+  "total_amount": 14207.06,
   "sponsors": [
+    {
+      "id": "sp_f349a3c603",
+      "name": "大梦",
+      "amount": 1,
+      "date": "2026-08-14",
+      "message": null
+    },
     {
       "id": "sp_75fbf6d2c6",
       "name": "doubleggirl",
