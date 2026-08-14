@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-14T03:11:46.356Z",
-  "count": 82,
-  "total_amount": 14207.06,
+  "updated": "2026-08-14T08:30:18.261Z",
+  "count": 83,
+  "total_amount": 14227.06,
   "sponsors": [
+    {
+      "id": "sp_40285f680d",
+      "name": "炽岩",
+      "amount": 20,
+      "date": "2026-08-14",
+      "message": null
+    },
     {
       "id": "sp_f349a3c603",
       "name": "大梦",
