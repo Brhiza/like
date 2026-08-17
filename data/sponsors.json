@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-14T08:30:18.261Z",
-  "count": 83,
-  "total_amount": 14227.06,
+  "updated": "2026-08-17T05:58:53.413Z",
+  "count": 84,
+  "total_amount": 14293.06,
   "sponsors": [
+    {
+      "id": "sp_cfba198ce5",
+      "name": "ing",
+      "amount": 66,
+      "date": "2026-08-17",
+      "message": null
+    },
     {
       "id": "sp_40285f680d",
       "name": "炽岩",
