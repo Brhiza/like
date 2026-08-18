@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-17T05:58:53.413Z",
-  "count": 84,
-  "total_amount": 14293.06,
+  "updated": "2026-08-18T12:32:53.526Z",
+  "count": 85,
+  "total_amount": 14295.06,
   "sponsors": [
+    {
+      "id": "sp_c9dfafe4de",
+      "name": "憓憓",
+      "amount": 2,
+      "date": "2026-08-18",
+      "message": null
+    },
     {
       "id": "sp_cfba198ce5",
       "name": "ing",
