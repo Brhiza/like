@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-08-27T05:27:21.715Z",
-  "count": 87,
-  "total_amount": 14318.86,
+  "updated": "2026-09-02T05:20:54.619Z",
+  "count": 88,
+  "total_amount": 14418.86,
   "sponsors": [
+    {
+      "id": "sp_b9dfe3ae1b",
+      "name": "冯杰",
+      "amount": 100,
+      "date": "2026-09-02",
+      "message": "赞助命语项目，加油做这个细分赛道的no1"
+    },
     {
       "id": "sp_58ff84cc28",
       "name": "starryaw",
