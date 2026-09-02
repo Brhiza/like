@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updated": "2026-09-02T05:20:54.619Z",
-  "count": 88,
-  "total_amount": 14418.86,
+  "updated": "2026-09-02T10:58:32.241Z",
+  "count": 90,
+  "total_amount": 14429.86,
   "sponsors": [
     {
       "id": "sp_b9dfe3ae1b",
@@ -10,6 +10,20 @@
       "amount": 100,
       "date": "2026-09-02",
       "message": "赞助命语项目，加油做这个细分赛道的no1"
+    },
+    {
+      "id": "sp_dda7a2717d",
+      "name": "June",
+      "amount": 10,
+      "date": "2026-09-02",
+      "message": null
+    },
+    {
+      "id": "sp_c86c520e29",
+      "name": "匿名",
+      "amount": 1,
+      "date": "2026-09-02",
+      "message": null
     },
     {
       "id": "sp_58ff84cc28",
