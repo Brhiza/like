@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-09-02T10:58:32.241Z",
-  "count": 90,
-  "total_amount": 14429.86,
+  "updated": "2026-09-04T02:33:04.146Z",
+  "count": 91,
+  "total_amount": 14617.86,
   "sponsors": [
+    {
+      "id": "sp_95de2c24d3",
+      "name": "doubleggirl",
+      "amount": 188,
+      "date": "2026-09-03",
+      "message": "感谢加持"
+    },
     {
       "id": "sp_b9dfe3ae1b",
       "name": "冯杰",
