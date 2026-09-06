@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-09-04T02:33:04.146Z",
-  "count": 91,
-  "total_amount": 14617.86,
+  "updated": "2026-09-06T12:44:45.947Z",
+  "count": 92,
+  "total_amount": 14627.86,
   "sponsors": [
+    {
+      "id": "sp_5ffcd00986",
+      "name": "林寒春",
+      "amount": 10,
+      "date": "2026-09-06",
+      "message": null
+    },
     {
       "id": "sp_95de2c24d3",
       "name": "doubleggirl",
