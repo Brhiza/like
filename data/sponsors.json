@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-09-06T12:44:45.947Z",
-  "count": 92,
-  "total_amount": 14627.86,
+  "updated": "2026-09-11T02:32:34.401Z",
+  "count": 93,
+  "total_amount": 14637.86,
   "sponsors": [
+    {
+      "id": "sp_8dc2537aad",
+      "name": "匿名",
+      "amount": 10,
+      "date": "2026-09-10",
+      "message": null
+    },
     {
       "id": "sp_5ffcd00986",
       "name": "林寒春",
