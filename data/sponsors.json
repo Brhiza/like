@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-09-11T02:32:34.401Z",
-  "count": 93,
-  "total_amount": 14637.86,
+  "updated": "2026-09-17T09:01:00.648Z",
+  "count": 94,
+  "total_amount": 14696.66,
   "sponsors": [
+    {
+      "id": "sp_0e560ca187",
+      "name": "昭济",
+      "amount": 58.8,
+      "date": "2026-09-17",
+      "message": null
+    },
     {
       "id": "sp_8dc2537aad",
       "name": "匿名",
