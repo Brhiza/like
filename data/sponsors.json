@@ -1,9 +1,16 @@
 {
   "version": 1,
-  "updated": "2026-09-27T08:24:46.653Z",
-  "count": 96,
-  "total_amount": 14747.66,
+  "updated": "2026-10-11T16:31:26.954Z",
+  "count": 97,
+  "total_amount": 14847.66,
   "sponsors": [
+    {
+      "id": "sp_28f2ccaa2a",
+      "name": "leebrenda",
+      "amount": 100,
+      "date": "2026-10-12",
+      "message": null
+    },
     {
       "id": "sp_ed2df4ee9c",
       "name": "momo",
